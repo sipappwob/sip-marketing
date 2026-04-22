@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@theme {
+  /* Moroccan sunset palette — warm ivory / sand / cabernet / ember */
+  --color-ivory: #f4ead7;
+  --color-sand: #e8d7b5;
+  --color-dune: #cfb38a;
+  --color-shell: #fbf3e1;
+  --color-cabernet: #5a1220;
+  --color-crimson: #8b2438;
+  --color-ember: #d4662b;
+  --color-saffron: #e8a845;
+  --color-ink: #1f120f;
+  --color-muted: #8a735a;
+  --color-hair: rgba(31, 18, 15, 0.12);
+
+  --font-serif:
+    var(--font-baskerville), "Baskerville", "Hoefler Text", "Times New Roman",
+    serif;
+  --font-sans:
+    var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+:root {
+  color-scheme: light only;
+}
+
+html,
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern", "liga";
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+/* Tasteful, never italic — we use color for emphasis. */
+em,
+i,
+cite,
+dfn,
+var,
+address {
+  font-style: normal;
+}
+
+::selection {
+  background: var(--color-cabernet);
+  color: var(--color-ivory);
+}
+
+/* ------------------------------------------------------------------
+ * Sunset atmospherics — these are scoped, not generic page gradients.
+ * ------------------------------------------------------------------ */
+
+.sip-sunset-halo {
+  position: absolute;
+  inset: -8% -10% -14% -10%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      62% 58% at 62% 40%,
+      rgba(232, 168, 69, 0.42) 0%,
+      rgba(212, 102, 43, 0.28) 28%,
+      rgba(212, 102, 43, 0) 66%
+    ),
+    radial-gradient(
+      48% 52% at 30% 68%,
+      rgba(139, 36, 56, 0.22) 0%,
+      rgba(139, 36, 56, 0) 70%
+    );
+  filter: blur(10px);
+}
+
+.sip-hero-horizon {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 40%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(244, 234, 215, 0) 0%,
+    rgba(244, 234, 215, 0) 30%,
+    rgba(232, 168, 69, 0.22) 70%,
+    rgba(212, 102, 43, 0.32) 92%,
+    rgba(139, 36, 56, 0.35) 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 45%,
+    #000 100%
+  );
+}
+
+/* The button gets a warm ember halo on hover — restrained, not glowy. */
+.sip-btn-primary {
+  background: linear-gradient(180deg, #6d1828 0%, #4f0f1c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 10px 24px -12px rgba(90, 18, 32, 0.6),
+    0 0 0 rgba(212, 102, 43, 0);
+  transition:
+    box-shadow 220ms ease,
+    transform 220ms ease,
+    background 220ms ease;
+}
+
+.sip-btn-primary:hover {
+  background: linear-gradient(180deg, #7a1a2c 0%, #5a1220 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 16px 38px -14px rgba(90, 18, 32, 0.7),
+    0 0 28px -8px rgba(212, 102, 43, 0.55);
+}
+
+/* Ornamental divider — editorial touch between major sections. */
+.sip-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  color: var(--color-ember);
+  font-family: var(--font-serif);
+  font-size: 14px;
+  letter-spacing: 0.4em;
+}
+
+.sip-ornament::before,
+.sip-ornament::after {
+  content: "";
+  height: 1px;
+  width: 56px;
+  background: linear-gradient(
+    90deg,
+    rgba(212, 102, 43, 0),
+    rgba(212, 102, 43, 0.45),
+    rgba(212, 102, 43, 0)
+  );
+}
