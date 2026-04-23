@@ -460,7 +460,7 @@ function SiteFooter() {
             — the live map of the night
           </span>
         </div>
-        <div className="flex items-center gap-8">
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
           <a href="#product" className="transition-colors hover:text-ink">
             Product
           </a>
@@ -469,6 +469,12 @@ function SiteFooter() {
           </a>
           <a href="#contact" className="transition-colors hover:text-ink">
             Contact
+          </a>
+          <a href="/privacy" className="transition-colors hover:text-ink">
+            Privacy
+          </a>
+          <a href="/terms" className="transition-colors hover:text-ink">
+            Terms
           </a>
         </div>
         <div className="text-muted/80">

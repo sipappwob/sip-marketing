@@ -158,3 +158,91 @@ address {
     rgba(212, 102, 43, 0)
   );
 }
+
+/* ------------------------------------------------------------------
+ * Legal prose — Privacy Policy, Terms of Service.
+ * Editorial, restrained, readable at length.
+ * ------------------------------------------------------------------ */
+
+.legal-prose {
+  color: var(--color-ink);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.legal-prose h2 {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin-top: 56px;
+  margin-bottom: 14px;
+  color: var(--color-ink);
+}
+
+.legal-prose h2:first-child {
+  margin-top: 0;
+}
+
+.legal-prose h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-cabernet);
+  margin-top: 28px;
+  margin-bottom: 8px;
+}
+
+.legal-prose p {
+  margin: 16px 0;
+  color: rgba(31, 18, 15, 0.82);
+}
+
+.legal-prose ul {
+  margin: 16px 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.legal-prose ul li {
+  position: relative;
+  padding-left: 22px;
+  margin: 10px 0;
+  color: rgba(31, 18, 15, 0.82);
+}
+
+.legal-prose ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 10px;
+  height: 1px;
+  background: var(--color-ember);
+}
+
+.legal-prose strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.legal-prose a {
+  color: var(--color-cabernet);
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(90, 18, 32, 0.35);
+  text-decoration-line: underline;
+  transition: text-decoration-color 180ms ease;
+}
+
+.legal-prose a:hover {
+  text-decoration-color: var(--color-cabernet);
+}
+
+.legal-prose hr {
+  border: 0;
+  height: 1px;
+  background: var(--color-hair);
+  margin: 48px 0;
+}
