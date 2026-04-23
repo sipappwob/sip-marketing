@@ -3,11 +3,13 @@ import { Container } from "./components/Container";
 import { Eyebrow } from "./components/Eyebrow";
 import { PhoneMockup } from "./components/PhoneMockup";
 import {
+  BarScreen,
   CrewScreen,
   FeedScreen,
   LineScreen,
   MapScreen,
   PlansScreen,
+  PromoScreen,
 } from "./components/Screens";
 import { Section } from "./components/Section";
 import { WaitlistForm } from "./components/WaitlistForm";
@@ -169,8 +171,8 @@ function Problem() {
         <div className="max-w-2xl">
           <Eyebrow>The problem</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Going out is one of the most social things humans do — and it runs
-            on almost <span className="text-cabernet">no data.</span>
+            Every night out is planned on screenshots and{" "}
+            <span className="text-cabernet">guesses.</span>
           </h2>
         </div>
 
@@ -206,7 +208,7 @@ type ProductRowData = {
   eyebrow: string;
   title: string;
   body: string;
-  screen: "map" | "line" | "crew";
+  screen: "map" | "line" | "crew" | "events";
   align: "left" | "right";
 };
 
@@ -232,6 +234,13 @@ const productRows: ProductRowData[] = [
     screen: "crew",
     align: "left",
   },
+  {
+    eyebrow: "Events",
+    title: "Real plans, not screenshots.",
+    body: "Host a night in one tap, invite your crew, see who's in. Public events surface nearby — with live RSVP counts, hosts you know, and a map pin already waiting.",
+    screen: "events",
+    align: "right",
+  },
 ];
 
 function Product() {
@@ -241,8 +250,8 @@ function Product() {
         <div className="max-w-2xl">
           <Eyebrow>The product</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            One app for the six decisions you make every{" "}
-            <span className="text-ember">Friday night.</span>
+            One app for every part of{" "}
+            <span className="text-ember">every night.</span>
           </h2>
         </div>
 
@@ -259,7 +268,13 @@ function Product() {
 function ProductRow({ eyebrow, title, body, screen, align }: ProductRowData) {
   const textFirst = align === "left";
   const Screen =
-    screen === "map" ? MapScreen : screen === "line" ? LineScreen : CrewScreen;
+    screen === "map"
+      ? MapScreen
+      : screen === "line"
+        ? LineScreen
+        : screen === "crew"
+          ? CrewScreen
+          : PlansScreen;
 
   return (
     <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-24">
@@ -398,12 +413,12 @@ function Showcase() {
           </div>
           <div className="md:z-10">
             <PhoneMockup>
-              <MapScreen />
+              <BarScreen />
             </PhoneMockup>
           </div>
           <div className="md:-ml-8 md:mt-12 md:self-end">
             <PhoneMockup rotate={5}>
-              <PlansScreen />
+              <PromoScreen />
             </PhoneMockup>
           </div>
         </div>

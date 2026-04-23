@@ -19,6 +19,7 @@ type ButtonProps = BaseProps & {
   href?: never;
   type?: "button" | "submit" | "reset";
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  disabled?: boolean;
 };
 
 type Props = AnchorProps | ButtonProps;
@@ -51,11 +52,16 @@ export function Button(props: Props) {
     );
   }
 
+  const buttonProps = props as ButtonProps;
   return (
     <button
-      type={props.type ?? "button"}
-      onClick={props.onClick}
-      className={classes}
+      type={buttonProps.type ?? "button"}
+      onClick={buttonProps.onClick}
+      disabled={buttonProps.disabled}
+      className={cn(
+        classes,
+        buttonProps.disabled && "opacity-60 cursor-not-allowed",
+      )}
     >
       {children}
     </button>
