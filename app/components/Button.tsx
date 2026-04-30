@@ -39,10 +39,23 @@ export function Button(props: Props) {
   const classes = cn(base, variants[variant], className);
 
   if ("href" in props && props.href) {
-    const isExternal = props.href.startsWith("http");
+    const href = props.href;
+    const isHttp = href.startsWith("http://") || href.startsWith("https://");
+    const isSpecialScheme = /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(href) && !isHttp;
+
+    // `next/link` should not be used for mailto:/tel:/sms:/etc.
+    if (isSpecialScheme) {
+      return (
+        <a href={href} className={classes} rel="noopener noreferrer">
+          {children}
+        </a>
+      );
+    }
+
+    const isExternal = isHttp;
     return (
       <Link
-        href={props.href}
+        href={href}
         className={classes}
         target={isExternal ? "_blank" : undefined}
         rel={isExternal ? "noopener noreferrer" : undefined}
