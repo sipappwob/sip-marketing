@@ -9,14 +9,16 @@ import { NextResponse } from "next/server";
  *
  * Required env vars (set in Vercel → sip-marketing1 → Settings → Environment):
  *   - RESEND_API_KEY   Resend API key (create at resend.com)
- *   - WAITLIST_FROM    Optional. Defaults to Resend's onboarding sender,
- *                      which works without domain verification. Once you
- *                      verify sipapp.co in Resend, set this to something
- *                      like "Sip Waitlist <waitlist@sipapp.co>".
+ *   - WAITLIST_FROM    Strongly recommended in production: a sender on a domain
+ *                      you verified in Resend (e.g. "Sip <hello@sipapp.co>").
+ *                      If unset, the API falls back to onboarding@resend.dev,
+ *                      which Resend may reject for real @sipapp.co recipients
+ *                      until you verify sipapp.co and use a matching From.
+ *   - WAITLIST_TO      Optional. Comma-separated override for `to` (testing).
  */
 
 const RESEND_API = "https://api.resend.com/emails";
-const RECIPIENTS = ["will@sipapp.co", "sam@sipapp.co"];
+const DEFAULT_RECIPIENTS = ["will@sipapp.co", "sam@sipapp.co"];
 const DEFAULT_FROM = "Sip Waitlist <onboarding@resend.dev>";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,6 +53,7 @@ export async function POST(req: Request) {
   const ip = forwardedFor.split(",")[0]?.trim() || "unknown";
   const timestamp = new Date().toISOString();
   const from = process.env.WAITLIST_FROM || DEFAULT_FROM;
+  const recipients = parseRecipientList(process.env.WAITLIST_TO);
 
   const subject = `Sip waitlist signup — ${email}`;
   const html = `
@@ -101,7 +104,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         from,
-        to: RECIPIENTS,
+        to: recipients,
         reply_to: email,
         subject,
         html,
@@ -126,6 +129,15 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ ok: true });
+}
+
+function parseRecipientList(raw: string | undefined): string[] {
+  if (!raw?.trim()) return DEFAULT_RECIPIENTS;
+  const list = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return list.length ? list : DEFAULT_RECIPIENTS;
 }
 
 function escapeHtml(input: string): string {
