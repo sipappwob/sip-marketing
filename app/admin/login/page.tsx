@@ -33,8 +33,22 @@ export default function AdminLoginPage() {
         password
       );
       router.replace("/admin");
-    } catch {
-      setError("Wrong email or password.");
+    } catch (err: unknown) {
+      const code =
+        (err as { code?: string })?.code ?? "auth/unknown";
+      const friendly =
+        code === "auth/invalid-credential" || code === "auth/wrong-password"
+          ? "Wrong email or password."
+          : code === "auth/user-not-found"
+            ? "No account with that email."
+            : code === "auth/operation-not-allowed"
+              ? "Email/password sign-in is disabled in this Firebase project. Enable it in Authentication → Sign-in method."
+              : code === "auth/api-key-not-valid"
+                ? "Firebase web config is wrong — check NEXT_PUBLIC_FIREBASE_* env vars in Vercel."
+                : code === "auth/network-request-failed"
+                  ? "Network error — check your connection."
+                  : `Sign in failed (${code}).`;
+      setError(friendly);
     } finally {
       setSubmitting(false);
     }
