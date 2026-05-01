@@ -133,7 +133,31 @@ export async function POST(req: Request) {
     );
   }
 
+  // Best-effort: log the signup in Firestore via the existing Cloud Function
+  // so it shows up in the admin dashboard. We pass `skipEmail: true` to avoid
+  // a duplicate notification (we already sent the nicer Vercel-templated one
+  // above). Failures here don't affect the user response.
+  void logSignupInFirestore(email).catch((err) => {
+    console.warn("[waitlist] Firestore log failed (non-fatal)", err);
+  });
+
   return NextResponse.json({ ok: true });
+}
+
+const DEFAULT_LOG_URL =
+  "https://us-east1-sip-staging-70488.cloudfunctions.net/submitEarlyAccessRequest";
+
+async function logSignupInFirestore(email: string): Promise<void> {
+  const url = process.env.EARLY_ACCESS_LOG_URL?.trim() || DEFAULT_LOG_URL;
+  await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      skipEmail: true,
+      source: "sipapp.co_waitlist",
+    }),
+  });
 }
 
 function parseRecipientList(raw: string | undefined): string[] {
