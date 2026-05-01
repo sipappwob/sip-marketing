@@ -21,9 +21,10 @@ import { NextResponse } from "next/server";
 
 const RESEND_API = "https://api.resend.com/emails";
 const DEFAULT_RECIPIENTS = ["will@sipapp.co", "sam@sipapp.co"];
-// The www.sipapp.co subdomain is verified in Resend; the local-part doesn't
-// need a real mailbox.
-const DEFAULT_FROM = "Sip Waitlist <hello@www.sipapp.co>";
+// The apex sipapp.co domain is verified in Resend (DKIM + MX confirmed in
+// public DNS). www.sipapp.co was never the verified host. The local-part
+// doesn't need a real mailbox.
+const DEFAULT_FROM = "Sip Waitlist <hello@sipapp.co>";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
