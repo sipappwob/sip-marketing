@@ -7,19 +7,23 @@ import { NextResponse } from "next/server";
  * team at will@sipapp.co and sam@sipapp.co via Resend. The requester's
  * address is put in Reply-To so hitting "Reply" answers the person directly.
  *
- * Required env vars (set in Vercel → sip-marketing1 → Settings → Environment):
- *   - RESEND_API_KEY   Resend API key (create at resend.com)
- *   - WAITLIST_FROM    Strongly recommended in production: a sender on a domain
- *                      you verified in Resend (e.g. "Sip <hello@sipapp.co>").
- *                      If unset, the API falls back to onboarding@resend.dev,
- *                      which Resend may reject for real @sipapp.co recipients
- *                      until you verify sipapp.co and use a matching From.
+ * Required env vars (set in Vercel → sip-marketing → Settings → Environment):
+ *   - RESEND_API_KEY   Resend API key (create at resend.com).
+ *   - WAITLIST_FROM    Optional override. Defaults to the verified
+ *                      www.sipapp.co domain below; set this if you verify
+ *                      another sender (e.g. "Sip <hello@sipapp.co>").
  *   - WAITLIST_TO      Optional. Comma-separated override for `to` (testing).
+ *
+ * NOTE on Resend: the `from` host MUST match a domain you verified in
+ * Resend → Domains. Sending from any other domain returns 403 and the
+ * API only allows sending to your account login email until verified.
  */
 
 const RESEND_API = "https://api.resend.com/emails";
 const DEFAULT_RECIPIENTS = ["will@sipapp.co", "sam@sipapp.co"];
-const DEFAULT_FROM = "Sip Waitlist <onboarding@resend.dev>";
+// The www.sipapp.co subdomain is verified in Resend; the local-part doesn't
+// need a real mailbox.
+const DEFAULT_FROM = "Sip Waitlist <hello@www.sipapp.co>";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
