@@ -492,8 +492,15 @@ function SiteFooter() {
             Terms
           </a>
         </div>
-        <div className="text-muted/80">
-          © {new Date().getFullYear()} Sip, Inc.
+        <div className="flex flex-col items-center gap-1 text-muted/80 sm:items-end">
+          <div>© {new Date().getFullYear()} Sip, Inc.</div>
+          <a
+            href="/admin/login"
+            rel="nofollow"
+            className="text-[10px] text-muted/35 transition-colors hover:text-muted/60"
+          >
+            Admin
+          </a>
         </div>
       </Container>
     </footer>
