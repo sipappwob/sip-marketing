@@ -43,3 +43,8 @@ next-env.d.ts
 # Firebase CLI local cache
 .firebase/
 
+# Bar admin dashboard (nested Next app; run npm install inside admin-dashboard/)
+admin-dashboard/node_modules/
+admin-dashboard/.next/
+admin-dashboard/.vercel/
+
