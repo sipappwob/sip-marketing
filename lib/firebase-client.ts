@@ -25,6 +25,7 @@ import {
   browserLocalPersistence,
 } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import { getFunctions, httpsCallable, type Functions } from "firebase/functions";
 
 const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
@@ -37,13 +38,25 @@ const config = {
 };
 
 let cachedApp: FirebaseApp | null = null;
+let cachedFunctions: Functions | null = null;
 let authPersistencePromise: Promise<void> | null = null;
+
+function ensureBrowser() {
+  if (typeof window === "undefined") {
+    throw new Error("This Firebase helper runs only in the browser.");
+  }
+}
 
 function ensureApp(): FirebaseApp {
   if (cachedApp) return cachedApp;
-  if (!config.apiKey || !config.projectId) {
+  if (
+    !config.apiKey ||
+    !config.authDomain ||
+    !config.projectId ||
+    !config.appId
+  ) {
     throw new Error(
-      "Firebase web config missing — set NEXT_PUBLIC_FIREBASE_* env vars in Vercel."
+      "Firebase web config incomplete — set NEXT_PUBLIC_FIREBASE_API_KEY, AUTH_DOMAIN, PROJECT_ID, and APP_ID in Vercel."
     );
   }
   cachedApp = getApps().length ? getApp() : initializeApp(config);
@@ -51,11 +64,35 @@ function ensureApp(): FirebaseApp {
 }
 
 export function firebaseAuth(): Auth {
+  ensureBrowser();
   return getAuth(ensureApp());
+}
+
+export function firebaseFunctions(): Functions {
+  ensureBrowser();
+  if (!cachedFunctions) {
+    cachedFunctions = getFunctions(firebaseAuth().app, "us-east1");
+  }
+  return cachedFunctions;
+}
+
+/** Server verifies Email/Password user + super_admins/{uid} before password reset. */
+export async function assertSuperAdminForPasswordReset(
+  email: string
+): Promise<void> {
+  const fn = httpsCallable<{ email: string }, { ok: true }>(
+    firebaseFunctions(),
+    "assertSuperAdminForPasswordReset"
+  );
+  const res = await fn({ email: email.trim().toLowerCase() });
+  if (!res.data?.ok) {
+    throw new Error("Could not verify super admin account.");
+  }
 }
 
 /** Keeps sessions across tabs/refreshes; call before sign-in. */
 export function ensureAuthPersistence(): Promise<void> {
+  ensureBrowser();
   const auth = firebaseAuth();
   if (!authPersistencePromise) {
     authPersistencePromise = setPersistence(auth, browserLocalPersistence).catch(
@@ -68,5 +105,6 @@ export function ensureAuthPersistence(): Promise<void> {
 }
 
 export function firestore(): Firestore {
+  ensureBrowser();
   return getFirestore(ensureApp());
 }

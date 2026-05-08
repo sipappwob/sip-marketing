@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { ensureAuthPersistence, firebaseAuth } from "../../../lib/firebase-client";
+import {
+  assertSuperAdminForPasswordReset,
+  ensureAuthPersistence,
+  firebaseAuth,
+} from "../../../lib/firebase-client";
 
 export default function AdminResetPasswordPage() {
   const [email, setEmail] = useState("");
@@ -23,7 +27,11 @@ export default function AdminResetPasswordPage() {
     setBusy(true);
     try {
       await ensureAuthPersistence();
-      await sendPasswordResetEmail(firebaseAuth(), trimmed);
+      await assertSuperAdminForPasswordReset(trimmed);
+      await sendPasswordResetEmail(firebaseAuth(), trimmed, {
+        url: `${window.location.origin}/admin/login`,
+        handleCodeInApp: false,
+      });
       setOk("Password reset email sent. Check your inbox (and spam).");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Could not send reset email.");
@@ -36,7 +44,10 @@ export default function AdminResetPasswordPage() {
     <main className="min-h-screen flex items-center justify-center px-6 bg-ivory">
       <div className="w-full max-w-sm space-y-4 bg-white border border-ink/10 rounded-xl p-6 shadow-sm">
         <h1 className="text-xl font-semibold">Reset password</h1>
-        <p className="text-xs text-ink/60">Super Admin — Firebase will email you a reset link.</p>
+        <p className="text-xs text-ink/60">
+          Use the same email as Super Admin sign-in (Firebase Email/Password). We confirm your account
+          on the server, then Firebase sends the link.
+        </p>
         <form onSubmit={onSubmit} className="space-y-3">
           <input
             type="email"
