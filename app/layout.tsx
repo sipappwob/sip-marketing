@@ -16,6 +16,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://sipapp.co"
+  ),
   title: "Sip — Bar promotions & what’s live",
   description:
     "Discover bar promotions and limited-time deals — know what’s running before you go out. Sip surfaces real campaigns from venues; join the waitlist for early access.",
