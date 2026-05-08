@@ -1,6 +1,8 @@
-# Sip Bar Admin Dashboard
+# Bar operator dashboard (prototype)
 
-Minimal Next.js dashboard for bar admins to view behavioral analytics (views, clicks, scans, redemptions, funnel, segment mix). No spend or payment data.
+**This is not the internal Sip Super Admin site.** Super-admin (team-only, `super_admins` in Firestore) lives in the **sip-marketing** app at `/admin` on the marketing deployment (e.g. Vercel).
+
+This folder is a **separate prototype** for a future **venue / bar-operator** console: analytics for bars they manage (`bar_admins`), callable `getMyBars` / `getBarAnalytics`, etc. The bar-operator product is not shipped yet; do not confuse this app with internal tools.
 
 ## Setup
 

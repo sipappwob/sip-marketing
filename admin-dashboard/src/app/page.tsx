@@ -132,10 +132,10 @@ export default function Home() {
     <div className="container" style={{ paddingTop: "4rem" }}>
       <div className="card" style={{ maxWidth: 400, margin: "0 auto" }}>
         <h1 style={{ margin: "0 0 1rem", fontSize: "1.5rem" }}>
-          Sip Bar Admin
+          Bar operator console <span style={{ fontSize: "0.75rem", fontWeight: 400, color: "#888" }}>(prototype)</span>
         </h1>
         <p style={{ color: "#666", marginBottom: "1.5rem", fontSize: "0.875rem" }}>
-          Sign in with your bar admin account.
+          For future venue analytics — not the internal team admin. Team tools: marketing site → /admin.
         </p>
 
         {pendingVerification ? (

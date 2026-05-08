@@ -18,7 +18,12 @@
 "use client";
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth } from "firebase/auth";
+import {
+  getAuth,
+  type Auth,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 
 const config = {
@@ -32,6 +37,7 @@ const config = {
 };
 
 let cachedApp: FirebaseApp | null = null;
+let authPersistencePromise: Promise<void> | null = null;
 
 function ensureApp(): FirebaseApp {
   if (cachedApp) return cachedApp;
@@ -46,6 +52,19 @@ function ensureApp(): FirebaseApp {
 
 export function firebaseAuth(): Auth {
   return getAuth(ensureApp());
+}
+
+/** Keeps sessions across tabs/refreshes; call before sign-in. */
+export function ensureAuthPersistence(): Promise<void> {
+  const auth = firebaseAuth();
+  if (!authPersistencePromise) {
+    authPersistencePromise = setPersistence(auth, browserLocalPersistence).catch(
+      (e) => {
+        console.warn("Auth persistence", e);
+      }
+    );
+  }
+  return authPersistencePromise;
 }
 
 export function firestore(): Firestore {
