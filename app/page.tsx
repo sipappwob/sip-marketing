@@ -103,17 +103,16 @@ function Hero() {
             </span>
 
             <h1 className="mt-7 font-serif text-5xl leading-[1.02] sm:text-6xl lg:text-[78px]">
-              Nightlife runs blind.
+              Promotions you can
               <br />
-              <span className="text-cabernet">Sip</span>
-              <span className="text-ink"> makes it </span>
-              <span className="text-ember">visible.</span>
+              <span className="text-cabernet">actually</span>
+              <span className="text-ink"> find.</span>
             </h1>
 
             <p className="mt-7 max-w-[520px] text-lg leading-relaxed text-muted">
-              A live map of where it&apos;s busy, where your friends are, and
-              where to go — before you leave the house. Built for the people
-              going out and the bars who want them.
+              Sip surfaces real bar deals and campaigns — what&apos;s live tonight,
+              not buried in a feed. Built for people going out and the venues
+              running the promos.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Button href="#contact" variant="primary">
@@ -127,10 +126,10 @@ function Hero() {
             <div className="mt-12 flex items-center gap-8 text-[11px] uppercase tracking-[0.22em] text-muted">
               <span>
                 <span className="mr-2 inline-block h-1.5 w-1.5 translate-y-[-1px] rounded-full bg-ember" />
-                Live tonight · LES
+                Live promos · tonight
               </span>
               <span className="hidden sm:inline">
-                47 friends · 12 bars
+                Deals · crews · map
               </span>
             </div>
           </div>
@@ -318,7 +317,7 @@ function WhySip() {
             points={[
               "See what's busy and where your crew is, in real time",
               "Skip the group-chat archaeology — plans live in one place",
-              "Earn line skips and nightly perks from bars you frequent",
+              "Catch limited-time promos from bars you actually go to — before they expire",
             ]}
             accent="ember"
           />
@@ -472,7 +471,7 @@ function SiteFooter() {
         <div className="flex items-center gap-3">
           <span className="font-serif text-xl text-ink">Sip</span>
           <span className="text-muted/80">
-            — the live map of the night
+            — bar promos, crews, and the live map
           </span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">

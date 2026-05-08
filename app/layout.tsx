@@ -16,9 +16,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Sip — Nightlife runs blind. Sip makes it visible.",
+  title: "Sip — Bar promotions & what’s live",
   description:
-    "Sip is the live map of the night: see where it's busy, where your friends are, and where to go — before you leave the house.",
+    "Discover bar promotions and limited-time deals — know what’s running before you go out. Sip surfaces real campaigns from venues; join the waitlist for early access.",
 };
 
 export default function RootLayout({
