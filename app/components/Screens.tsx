@@ -864,7 +864,7 @@ export function PromoScreen() {
       time: "1h ago",
       tag: "No cover",
       title: "Free entry until 11 with the app",
-      desc: "Show your Sip redeem QR at the door.",
+      desc: "Staff verifies the offer in Sip at the door.",
       when: "Tonight · 9–11 PM",
       going: 28,
     },

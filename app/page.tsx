@@ -110,8 +110,8 @@ function Hero() {
 
             <p className="mt-7 max-w-[520px] text-lg leading-relaxed text-muted">
               Sip is the operating layer for nightlife. Bars run scheduled promotions,
-              patrons see what&apos;s live tonight, and a QR scan at the door closes
-              the loop — view, click, scan, redeemed.
+              patrons see what&apos;s live tonight, and in-venue redemption ties spend
+              back to the campaign — from discovery through confirmation at the door.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Button href="#contact" variant="primary">
@@ -213,7 +213,7 @@ const productRows: ProductRowData[] = [
   {
     eyebrow: "Promotions",
     title: "Real promos. Real windows.",
-    body: "Bars schedule campaigns with start and end times; patrons see them in a Promotions feed for tonight and the rest of the week. A time-limited QR redeems at the door — no coupons, no screenshots.",
+    body: "Bars schedule campaigns with start and end times; patrons see them in a Promotions feed for tonight and the rest of the week. Redemption happens in-venue with staff confirmation — no coupons, no screenshots.",
     screen: "promos",
     align: "left",
   },
@@ -323,9 +323,9 @@ function WhySip() {
             label="For bar operators"
             title="Door-level attribution, finally."
             points={[
-              "Schedule campaigns with windows; redeem with a time-limited QR at the door",
+              "Schedule campaigns with windows; confirm redemptions in-venue when patrons arrive",
               "Targeting by zone, age bracket, and behavioral segment — built on a real audience rollup",
-              "Views → clicks → scans → confirmed redemptions, plus hour-by-hour and day-of-week heatmaps",
+              "Views and clicks through confirmed redemptions, plus hour-by-hour and day-of-week heatmaps",
             ]}
             accent="cabernet"
           />

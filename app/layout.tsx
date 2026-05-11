@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   ),
   title: "Sip — Bar promotions, on a real clock.",
   description:
-    "Sip is the operating layer for nightlife: bars run scheduled promotions, patrons see what's live tonight, and a QR scan at the door closes the loop. Private beta in New York.",
+    "Sip is the operating layer for nightlife: bars run scheduled promotions, patrons see what's live tonight, and in-venue redemption ties offers back to the campaign. Private beta in New York.",
 };
 
 export default function RootLayout({
