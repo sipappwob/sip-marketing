@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   ),
   title: "Sip — See what's live tonight",
   description:
-    "One app for tonight's offers, map, and plans. Bars run targeted campaigns and read funnel analytics. Private beta in New York.",
+    "See tonight's bar offers, map context, and real plans in one app — built for going out first. Venues run targeted campaigns and funnel analytics on the same network. Private beta in New York.",
 };
 
 export default function RootLayout({

@@ -105,15 +105,16 @@ function Hero() {
             <h1 className="mt-7 font-serif text-5xl leading-[1.02] sm:text-6xl lg:text-[78px]">
               <span className="text-cabernet">What&apos;s live, in one place.</span>
               <br />
-              <span className="text-ink">Targeted promotions.</span>{" "}
-              <span className="text-ink">Analytics you can use.</span>
+              <span className="text-ink">
+                Offers, map, and plans — without the guesswork.
+              </span>
             </h1>
 
             <p className="mt-7 max-w-[520px] text-lg leading-relaxed text-muted">
-              For going out, Sip is where tonight&apos;s offers, the neighborhood
-              map, and real plans show up together. For bars, it&apos;s scheduled
-              campaigns, audience targeting, and funnel analytics — so spend comes
-              with a read on what moved.
+              Sip is built for going out: tonight&apos;s promos with real windows, the
+              neighborhood on a map, and RSVPs that stay attached to the plan. The
+              same network gives bars scheduled campaigns, audience targeting, and
+              funnel analytics — so what you see stays worth opening.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Button href="#contact" variant="primary">
@@ -127,10 +128,12 @@ function Hero() {
             <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-[11px] uppercase tracking-[0.22em] text-muted">
               <span className="flex items-center gap-2">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-ember" />
-                Tonight &amp; upcoming
+                Promos &amp; map
               </span>
-              <span>Patron app</span>
-              <span className="hidden sm:inline">Bar dashboard</span>
+              <span>Events &amp; groups</span>
+              <span className="hidden sm:inline">
+                Venues: campaigns &amp; analytics
+              </span>
             </div>
           </div>
 
@@ -150,12 +153,12 @@ function Hero() {
 
 const problems = [
   {
-    title: "Reach, not spray",
-    body: "Offers scatter across social, print, and word of mouth. Venues can&apos;t aim them; patrons can&apos;t rely on a single place to look.",
+    title: "The night is scattered",
+    body: "Specials, lines, and plans live across stories, texts, and half a dozen apps. You still guess what&apos;s real, what&apos;s expired, and where people actually agreed to meet.",
   },
   {
-    title: "Spend without signal",
-    body: "Bars buy nights and promos with little read on who saw a campaign, what moved, or which hours matter. The feedback loop comes too late, if at all.",
+    title: "Venues fly just as blind",
+    body: "Bars push the same offers into the void with little sense of who saw them or what moved. That&apos;s a different pain — but the same missing signal — as yours.",
   },
 ];
 
@@ -166,7 +169,7 @@ function Problem() {
         <div className="max-w-2xl">
           <Eyebrow>The problem</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Nightlife still sells blind.
+            Nobody sees the same night.
           </h2>
         </div>
 
@@ -209,30 +212,30 @@ type ProductRowData = {
 const productRows: ProductRowData[] = [
   {
     eyebrow: "Promotions",
-    title: "Campaigns on a schedule.",
-    body: "Bars set start and end times, shape reach with zone- and segment-level targeting, and surface offers in a Promotions feed patrons check for tonight — not buried in an infinite timeline.",
+    title: "Tonight&apos;s offers, organized.",
+    body: "See bar deals with real start and end times in a feed meant for going out — not buried in a social timeline. Venues set those windows behind the scenes and tune likely reach by zone and segment.",
     screen: "promos",
     align: "left",
   },
   {
-    eyebrow: "Analytics",
-    title: "Know what moved.",
-    body: "Views, clicks, and redemptions roll up by campaign with segment mix and peak-hour patterns from in-app behavior.",
-    screen: "analytics",
+    eyebrow: "Neighborhood",
+    title: "The block, before you walk.",
+    body: "Nearby spots with recent wait, cover, and crowd from people already there — plus fast line reports when someone shares what it looks like from the sidewalk. Honest signal for you; richer context for everyone.",
+    screen: "map",
     align: "right",
   },
   {
-    eyebrow: "Neighborhood",
-    title: "The block, in context.",
-    body: "Nearby bars with recent wait, cover, and crowd from patron reports — plus a fast line-report flow when someone is willing to share what it looks like from the sidewalk.",
-    screen: "map",
+    eyebrow: "Events & groups",
+    title: "Plans that stay put.",
+    body: "Host or follow a night with RSVPs and posts tied to the same plan, not lost across chats. Venues meet you on the same rails when offers and events line up.",
+    screen: "events",
     align: "left",
   },
   {
-    eyebrow: "Events & groups",
-    title: "Plans with RSVPs attached.",
-    body: "Host public or group-only events, carry friend groups night to night, and keep posts and RSVPs tied to the same object — not lost across chats.",
-    screen: "events",
+    eyebrow: "Bar analytics",
+    title: "When venues measure, offers stay sharp.",
+    body: "The same network that powers your promos gives bars funnel metrics — views, clicks, redemptions, segment mix, and peak-hour patterns — so what&apos;s in your feed earns its place.",
+    screen: "analytics",
     align: "right",
   },
 ];
@@ -244,8 +247,8 @@ function Product() {
         <div className="max-w-2xl">
           <Eyebrow>The product</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Built for operators.
-            <span className="text-ember"> Clear for guests.</span>
+            Your night, clear.
+            <span className="text-ember"> Venues, supported.</span>
           </h2>
         </div>
 
@@ -300,28 +303,28 @@ function WhySip() {
         <div className="max-w-2xl">
           <Eyebrow>Why Sip</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Same network.
-            <span className="text-cabernet"> Different jobs.</span>
+            You go out.
+            <span className="text-cabernet"> Venues need a read.</span>
           </h2>
         </div>
 
-        <div className="mt-16 grid gap-10 md:grid-cols-2 md:gap-14 lg:mt-20">
+        <div className="mt-16 flex max-w-4xl flex-col gap-10 lg:mt-20 lg:gap-14">
           <WhyCard
-            label="For patrons"
-            title="One app for going out."
+            label="If you&apos;re going out"
+            title="One feed for the night."
             points={[
-              "Promotions with real windows — today and the rest of the week",
-              "Nearby bars with wait, cover, and crowd from people already there",
-              "Events and groups with RSVPs and posts in one feed",
+              "Promos with real windows — today and the rest of the week",
+              "Map context from people already at the door",
+              "Events and groups with RSVPs that don&apos;t dissolve in chat",
             ]}
             accent="ember"
           />
           <WhyCard
-            label="For bar operators"
-            title="Target. Run. Read the results."
+            label="If you run a venue"
+            title="Campaigns and numbers on the same product."
             points={[
-              "Audience estimation by zone, age bracket, and behavioral segment",
-              "Scheduled campaigns surfaced in a dedicated patron feed",
+              "Reach estimates by zone, age bracket, and behavioral segment",
+              "Scheduled offers surfaced where patrons actually look",
               "Funnel metrics, segment mix, and peak-hour patterns per campaign",
             ]}
             accent="cabernet"
@@ -394,7 +397,8 @@ function Showcase() {
             Feed, venue, <span className="text-ember">groups.</span>
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-muted">
-            Mock screens match the live iOS layout — not generic placeholders.
+            The screens you actually thumb through — feed, venue, groups — styled
+            like the shipping iOS app.
           </p>
         </div>
 
@@ -445,8 +449,8 @@ function CTA() {
             <span className="text-ember">your city.</span>
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-muted">
-            We&apos;re live in private beta in New York. Leave your email and
-            we&apos;ll reach out when the next wave opens.
+            Join the waitlist for the consumer app. Run a venue? Same list — we&apos;ll
+            route you when your market opens.
           </p>
 
           <WaitlistForm />
@@ -465,7 +469,7 @@ function SiteFooter() {
         <div className="flex items-center gap-3">
           <span className="font-serif text-xl text-ink">Sip</span>
           <span className="text-muted/80">
-            — targeted promotions, patron discovery, bar analytics
+            — what&apos;s live, maps &amp; plans · campaigns &amp; analytics for venues
           </span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
