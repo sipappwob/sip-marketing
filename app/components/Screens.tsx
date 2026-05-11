@@ -632,7 +632,7 @@ export function FeedScreen() {
               Beverly&rsquo;s · 20% off well drinks till 11
             </div>
             <div className="mt-0.5 text-[9.5px] text-ivory/75">
-              4 blocks away · tap to claim
+              4 blocks away · tap for details
             </div>
           </div>
         </div>
@@ -864,7 +864,7 @@ export function PromoScreen() {
       time: "1h ago",
       tag: "No cover",
       title: "Free entry until 11 with the app",
-      desc: "Staff verifies the offer in Sip at the door.",
+      desc: "Free entry before 11 — terms in the app.",
       when: "Tonight · 9–11 PM",
       going: 28,
     },
@@ -888,6 +888,72 @@ export function PromoScreen() {
           ))}
         </div>
         <TabBar active="promos" />
+      </div>
+    </ScreenFrame>
+  );
+}
+
+/* --------------------------- BAR ANALYTICS ---------------------------- */
+/** Stylized bar-admin metrics — mirrors funnel + rollup concepts in the real dashboard. */
+
+export function BarAnalyticsScreen() {
+  const cells = [
+    0.22, 0.35, 0.5, 0.4, 0.28, 0.45, 0.55, 0.38, 0.42, 0.6, 0.48, 0.33,
+    0.4, 0.52, 0.7, 0.58, 0.44, 0.5, 0.62, 0.55, 0.48,
+  ];
+  return (
+    <ScreenFrame>
+      <NavBar
+        title="Campaigns"
+        subtitle="Beverly's · this week"
+        trailing={
+          <div className="rounded-full border border-hair px-2 py-0.5 text-[9px] font-medium text-muted">
+            Range
+          </div>
+        }
+      />
+      <div className="flex h-[calc(100%-56px)] flex-col px-3 pb-1 pt-2">
+        <div className="rounded-xl border border-hair bg-ivory/90 p-2.5 shadow-sm">
+          <div className="text-[8px] uppercase tracking-[0.18em] text-muted">
+            Live promotion
+          </div>
+          <div className="mt-0.5 font-serif text-[12px] text-ink">
+            20% off wells · tonight
+          </div>
+          <div className="mt-2 grid grid-cols-3 gap-1.5 text-center">
+            {[
+              ["Views", "1.4k"],
+              ["Clicks", "312"],
+              ["Redemptions", "48"],
+            ].map(([label, val]) => (
+              <div key={label} className="rounded-lg bg-shell py-1.5">
+                <div className="text-[7px] uppercase tracking-[0.12em] text-muted">
+                  {label}
+                </div>
+                <div className="mt-0.5 font-serif text-[11px] text-ink">
+                  {val}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mt-2 min-h-0 flex-1 rounded-xl border border-hair bg-shell/60 p-2">
+          <div className="text-[8px] uppercase tracking-[0.18em] text-muted">
+            When it hits · hour × day
+          </div>
+          <div className="mt-1.5 grid grid-cols-7 gap-0.5">
+            {cells.map((op, i) => (
+              <div
+                key={i}
+                className="aspect-square rounded-[2px] bg-cabernet"
+                style={{ opacity: 0.15 + op * 0.55 }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="mt-auto">
+          <TabBar active="you" />
+        </div>
       </div>
     </ScreenFrame>
   );

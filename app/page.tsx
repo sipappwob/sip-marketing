@@ -3,10 +3,10 @@ import { Container } from "./components/Container";
 import { Eyebrow } from "./components/Eyebrow";
 import { PhoneMockup } from "./components/PhoneMockup";
 import {
+  BarAnalyticsScreen,
   BarScreen,
   FeedScreen,
   GroupsScreen,
-  LineScreen,
   MapScreen,
   PlansScreen,
   PromoScreen,
@@ -103,15 +103,14 @@ function Hero() {
             </span>
 
             <h1 className="mt-7 font-serif text-5xl leading-[1.02] sm:text-6xl lg:text-[78px]">
-              The night,
+              <span className="text-cabernet">Targeted promotions.</span>
               <br />
-              <span className="text-cabernet">on a clock.</span>
+              <span className="text-ink">Analytics you can use.</span>
             </h1>
 
             <p className="mt-7 max-w-[520px] text-lg leading-relaxed text-muted">
-              Sip is the operating layer for nightlife. Bars run scheduled promotions,
-              patrons see what&apos;s live tonight, and in-venue redemption ties spend
-              back to the campaign — from discovery through confirmation at the door.
+              Sip gives bars scheduled campaigns, audience targeting, and funnel
+              analytics — and gives patrons one place to see what&apos;s live nearby.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Button href="#contact" variant="primary">
@@ -128,7 +127,7 @@ function Hero() {
                 Patron app
               </span>
               <span>Bar dashboard</span>
-              <span className="hidden sm:inline">Door-level attribution</span>
+              <span className="hidden sm:inline">Zone &amp; segment reach</span>
             </div>
           </div>
 
@@ -148,16 +147,12 @@ function Hero() {
 
 const problems = [
   {
-    title: "Promotions are invisible",
-    body: "Specials, doors, and hours live in stories, DMs, and printed signs. Patrons walk in guessing what still applies — bars repeat the same offer across three platforms and still miss the people next door.",
+    title: "Reach, not spray",
+    body: "Offers scatter across social, print, and word of mouth. Venues can&apos;t aim them; patrons can&apos;t rely on a single place to look.",
   },
   {
-    title: "Wait and crowd are folklore",
-    body: "From the sidewalk, you can't tell if a bar is empty, packed, or roped. Decisions get made on hearsay, and the wrong bar wins the foot traffic.",
-  },
-  {
-    title: "Nothing reports back",
-    body: "Bars run real offers with no idea what worked. No funnel, no audience cut, no door-level redemption — just a guess every shift.",
+    title: "Spend without signal",
+    body: "Bars buy nights and promos with little read on who saw a campaign, what moved, or which hours matter. The feedback loop comes too late, if at all.",
   },
 ];
 
@@ -168,12 +163,11 @@ function Problem() {
         <div className="max-w-2xl">
           <Eyebrow>The problem</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Nightlife is the last{" "}
-            <span className="text-cabernet">unmeasured channel.</span>
+            Nightlife still sells blind.
           </h2>
         </div>
 
-        <div className="mt-16 grid gap-14 md:grid-cols-3 md:gap-10 lg:mt-24 lg:gap-12">
+        <div className="mt-16 grid gap-14 md:grid-cols-2 md:gap-12 lg:mt-24 lg:gap-16">
           {problems.map((p, i) => (
             <article
               key={p.title}
@@ -205,36 +199,36 @@ type ProductRowData = {
   eyebrow: string;
   title: string;
   body: string;
-  screen: "promos" | "map" | "line" | "events";
+  screen: "promos" | "analytics" | "map" | "events";
   align: "left" | "right";
 };
 
 const productRows: ProductRowData[] = [
   {
     eyebrow: "Promotions",
-    title: "Real promos. Real windows.",
-    body: "Bars schedule campaigns with start and end times; patrons see them in a Promotions feed for tonight and the rest of the week. Redemption happens in-venue with staff confirmation — no coupons, no screenshots.",
+    title: "Campaigns on a schedule.",
+    body: "Bars set start and end times, shape reach with zone- and segment-level targeting, and surface offers in a Promotions feed patrons check for tonight — not buried in an infinite timeline.",
     screen: "promos",
     align: "left",
   },
   {
-    eyebrow: "Live map",
-    title: "The neighborhood, right now.",
-    body: "Bars near you, with patron-submitted wait times, cover, and crowd. Reports expire on the order of hours, so the map reflects the next hour — not last weekend.",
-    screen: "map",
+    eyebrow: "Analytics",
+    title: "Know what moved.",
+    body: "Views, clicks, and redemptions roll up by campaign with segment mix and peak-hour patterns from in-app behavior.",
+    screen: "analytics",
     align: "right",
   },
   {
-    eyebrow: "Line reports",
-    title: "Know the line before you walk.",
-    body: "A photo-first report flow turns five people in line into a public wait time. Submit in seconds; nearby patrons see it for the next couple of hours.",
-    screen: "line",
+    eyebrow: "Neighborhood",
+    title: "The block, in context.",
+    body: "Nearby bars with recent wait, cover, and crowd from patron reports — plus a fast line-report flow when someone is willing to share what it looks like from the sidewalk.",
+    screen: "map",
     align: "left",
   },
   {
     eyebrow: "Events & groups",
-    title: "Plans that aren't a group chat.",
-    body: "Host an event in one tap, invite a friend group or open it to the public, and carry the same group from one night to the next. RSVPs, posts, and check-ins stay attached to the plan.",
+    title: "Plans with RSVPs attached.",
+    body: "Host public or group-only events, carry friend groups night to night, and keep posts and RSVPs tied to the same object — not lost across chats.",
     screen: "events",
     align: "right",
   },
@@ -247,8 +241,8 @@ function Product() {
         <div className="max-w-2xl">
           <Eyebrow>The product</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            One app for both sides of{" "}
-            <span className="text-ember">the night.</span>
+            Built for operators.
+            <span className="text-ember"> Clear for guests.</span>
           </h2>
         </div>
 
@@ -267,10 +261,10 @@ function ProductRow({ eyebrow, title, body, screen, align }: ProductRowData) {
   const Screen =
     screen === "promos"
       ? PromoScreen
-      : screen === "map"
-        ? MapScreen
-        : screen === "line"
-          ? LineScreen
+      : screen === "analytics"
+        ? BarAnalyticsScreen
+        : screen === "map"
+          ? MapScreen
           : PlansScreen;
 
   return (
@@ -303,29 +297,29 @@ function WhySip() {
         <div className="max-w-2xl">
           <Eyebrow>Why Sip</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Two sides of the night,{" "}
-            <span className="text-cabernet">one product.</span>
+            Same network.
+            <span className="text-cabernet"> Different jobs.</span>
           </h2>
         </div>
 
         <div className="mt-16 grid gap-10 md:grid-cols-2 md:gap-14 lg:mt-20">
           <WhyCard
             label="For patrons"
-            title="The night, on a clock."
+            title="One app for going out."
             points={[
-              "Promotions with real start and end times — see what's running tonight and the rest of the week",
-              "Wait, cover, and crowd at nearby bars, reported by patrons already inside",
-              "Events, groups, and posts in one place — RSVP, host, or quietly check the plan",
+              "Promotions with real windows — today and the rest of the week",
+              "Nearby bars with wait, cover, and crowd from people already there",
+              "Events and groups with RSVPs and posts in one feed",
             ]}
             accent="ember"
           />
           <WhyCard
             label="For bar operators"
-            title="Door-level attribution, finally."
+            title="Target. Run. Read the results."
             points={[
-              "Schedule campaigns with windows; confirm redemptions in-venue when patrons arrive",
-              "Targeting by zone, age bracket, and behavioral segment — built on a real audience rollup",
-              "Views and clicks through confirmed redemptions, plus hour-by-hour and day-of-week heatmaps",
+              "Audience estimation by zone, age bracket, and behavioral segment",
+              "Scheduled campaigns surfaced in a dedicated patron feed",
+              "Funnel metrics, segment mix, and peak-hour patterns per campaign",
             ]}
             accent="cabernet"
           />
@@ -394,12 +388,10 @@ function Showcase() {
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow className="justify-center">In the app</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Feed, bar profile,{" "}
-            <span className="text-ember">groups.</span>
+            Feed, venue, <span className="text-ember">groups.</span>
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-muted">
-            The three surfaces patrons touch most. Every screen below is a 1:1
-            render of what ships in the iOS build today.
+            Mock screens match the live iOS layout — not generic placeholders.
           </p>
         </div>
 
@@ -470,7 +462,7 @@ function SiteFooter() {
         <div className="flex items-center gap-3">
           <span className="font-serif text-xl text-ink">Sip</span>
           <span className="text-muted/80">
-            — promotions, line reports, door-level attribution
+            — targeted promotions, patron discovery, bar analytics
           </span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
