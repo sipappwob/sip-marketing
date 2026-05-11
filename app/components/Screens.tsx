@@ -473,22 +473,23 @@ export function LineScreen() {
   );
 }
 
-/* -------------------------------- CREW --------------------------------- */
+/* -------------------------------- GROUPS ------------------------------- */
+/* Friend group screen — group plan (social_event) + group-visibility posts. */
 
-export function CrewScreen() {
+export function GroupsScreen() {
   const members = [
-    { i: "MG", c: "#5A1220", name: "Maya" },
-    { i: "JT", c: "#D4662B", name: "Jordan" },
-    { i: "AS", c: "#E8A845", name: "Amelia" },
-    { i: "SK", c: "#8B2438", name: "Sam" },
-    { i: "TL", c: "#8A735A", name: "Theo" },
+    { i: "MG", c: "#5A1220" },
+    { i: "JT", c: "#D4662B" },
+    { i: "AS", c: "#E8A845" },
+    { i: "SK", c: "#8B2438" },
+    { i: "TL", c: "#8A735A" },
   ];
 
   return (
     <ScreenFrame>
       <NavBar
         title="Friday Regulars"
-        subtitle="Your crew · 5 members"
+        subtitle="Group · 5 members"
         trailing={
           <div className="rounded-full border border-hair px-2 py-0.5 text-[9px] font-medium text-muted">
             Invite
@@ -496,21 +497,21 @@ export function CrewScreen() {
         }
       />
       <div className="flex h-[calc(100%-56px)] flex-col px-3 pt-2.5">
-        {/* Plan card */}
+        {/* Group plan card — corresponds to a social_event with visibility = group */}
         <div className="rounded-2xl bg-cabernet p-3 text-ivory shadow-[0_10px_24px_-14px_rgba(90,18,32,0.55)]">
           <div className="flex items-center justify-between">
             <div className="text-[9px] uppercase tracking-[0.22em] text-saffron">
-              Tonight · 10:00 PM
+              Fri · 10:00 PM · Group event
             </div>
             <div className="rounded-full bg-ivory/15 px-2 py-[2px] text-[9px] font-medium">
               Going
             </div>
           </div>
           <div className="mt-1 font-serif text-[16px] leading-tight">
-            Lovers Rock, then Beverly&rsquo;s rooftop.
+            Lovers Rock, late.
           </div>
           <div className="mt-1 text-[10px] text-ivory/75">
-            Meet at Essex & Delancey, 9:45
+            ◎ Lovers Rock · 419 Tompkins Ave
           </div>
           <div className="mt-2.5 flex items-center justify-between">
             <div className="flex -space-x-1.5">
@@ -524,13 +525,13 @@ export function CrewScreen() {
                 />
               ))}
             </div>
-            <div className="text-[10px] text-saffron">3 in · 1 maybe</div>
+            <div className="text-[10px] text-saffron">3 going · 1 maybe</div>
           </div>
         </div>
 
-        {/* Activity feed */}
+        {/* Group posts — Post.visibility = .group, scoped to this groupId */}
         <div className="mt-2.5 text-[8px] uppercase tracking-[0.22em] text-muted">
-          Live activity
+          Group posts
         </div>
         <div className="mt-1.5 space-y-1.5">
           <div className="flex items-start gap-2 rounded-xl border border-hair bg-ivory/70 p-2">
@@ -538,15 +539,16 @@ export function CrewScreen() {
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between">
                 <div className="font-serif text-[11.5px] text-ink">
-                  Maya is at Ray&rsquo;s
+                  @maya.g
                 </div>
                 <div className="text-[9px] uppercase tracking-[0.14em] text-ember">
                   12m
                 </div>
               </div>
-              <div className="text-[10px] leading-snug text-muted">
-                &ldquo;Line moving fast, kitchen open till midnight.&rdquo;
+              <div className="mt-0.5 text-[10.5px] leading-snug text-ink/85">
+                At Ray&rsquo;s now — kitchen open till midnight, line basically nothing.
               </div>
+              <div className="mt-1 text-[9px] text-muted">◎ Ray&rsquo;s Bar</div>
             </div>
           </div>
           <div className="flex items-start gap-2 rounded-xl border border-hair bg-ivory/70 p-2">
@@ -554,37 +556,22 @@ export function CrewScreen() {
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between">
                 <div className="font-serif text-[11.5px] text-ink">
-                  Jordan pinned a spot
+                  @jordan.t
                 </div>
                 <div className="text-[9px] uppercase tracking-[0.14em] text-ember">
-                  Now
+                  28m
                 </div>
               </div>
-              <div className="text-[10px] leading-snug text-muted">
-                Beverly&rsquo;s rooftop opens at 10 — move?
+              <div className="mt-0.5 text-[10.5px] leading-snug text-ink/85">
+                Lovers Rock posted $6 rum punch until 10. Aiming there after.
               </div>
-            </div>
-          </div>
-          <div className="flex items-start gap-2 rounded-xl border border-hair bg-ivory/70 p-2">
-            <Avatar initials="AS" color="#E8A845" size={22} />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-baseline justify-between">
-                <div className="font-serif text-[11.5px] text-ink">
-                  Amelia is on her way
-                </div>
-                <div className="text-[9px] uppercase tracking-[0.14em] text-ember">
-                  3m
-                </div>
-              </div>
-              <div className="text-[10px] leading-snug text-muted">
-                Uber 8 min out
-              </div>
+              <div className="mt-1 text-[9px] text-muted">◎ Lovers Rock</div>
             </div>
           </div>
         </div>
 
         <div className="mt-auto mb-1">
-          <TabBar active="plans" />
+          <TabBar active="feed" />
         </div>
       </div>
     </ScreenFrame>
@@ -875,9 +862,9 @@ export function PromoScreen() {
       venueType: "Live music",
       distance: "5 blocks",
       time: "1h ago",
-      tag: "Line skip",
-      title: "Skip the rope · Sip users only",
-      desc: "Show the QR at the door. First 50 in before 11.",
+      tag: "No cover",
+      title: "Free entry until 11 with the app",
+      desc: "Show your Sip redeem QR at the door.",
       when: "Tonight · 9–11 PM",
       going: 28,
     },
@@ -1048,9 +1035,6 @@ export function PlansScreen() {
     </ScreenFrame>
   );
 }
-
-/** Keep the old export name available for callers. */
-export const EventScreen = PlansScreen;
 
 function EventRow({
   event,

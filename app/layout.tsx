@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://sipapp.co"
   ),
-  title: "Sip — Bar promotions & what’s live",
+  title: "Sip — Bar promotions, on a real clock.",
   description:
-    "Discover bar promotions and limited-time deals — know what’s running before you go out. Sip surfaces real campaigns from venues; join the waitlist for early access.",
+    "Sip is the operating layer for nightlife: bars run scheduled promotions, patrons see what's live tonight, and a QR scan at the door closes the loop. Private beta in New York.",
 };
 
 export default function RootLayout({

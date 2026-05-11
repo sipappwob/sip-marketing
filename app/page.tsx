@@ -4,8 +4,8 @@ import { Eyebrow } from "./components/Eyebrow";
 import { PhoneMockup } from "./components/PhoneMockup";
 import {
   BarScreen,
-  CrewScreen,
   FeedScreen,
+  GroupsScreen,
   LineScreen,
   MapScreen,
   PlansScreen,
@@ -103,16 +103,15 @@ function Hero() {
             </span>
 
             <h1 className="mt-7 font-serif text-5xl leading-[1.02] sm:text-6xl lg:text-[78px]">
-              Promotions you can
+              The night,
               <br />
-              <span className="text-cabernet">actually</span>
-              <span className="text-ink"> find.</span>
+              <span className="text-cabernet">on a clock.</span>
             </h1>
 
             <p className="mt-7 max-w-[520px] text-lg leading-relaxed text-muted">
-              Sip surfaces real bar deals and campaigns — what&apos;s live tonight,
-              not buried in a feed. Built for people going out and the venues
-              running the promos.
+              Sip is the operating layer for nightlife. Bars run scheduled promotions,
+              patrons see what&apos;s live tonight, and a QR scan at the door closes
+              the loop — view, click, scan, redeemed.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Button href="#contact" variant="primary">
@@ -123,21 +122,20 @@ function Hero() {
               </Button>
             </div>
 
-            <div className="mt-12 flex items-center gap-8 text-[11px] uppercase tracking-[0.22em] text-muted">
-              <span>
-                <span className="mr-2 inline-block h-1.5 w-1.5 translate-y-[-1px] rounded-full bg-ember" />
-                Live promos · tonight
+            <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-[11px] uppercase tracking-[0.22em] text-muted">
+              <span className="flex items-center gap-2">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-ember" />
+                Patron app
               </span>
-              <span className="hidden sm:inline">
-                Deals · crews · map
-              </span>
+              <span>Bar dashboard</span>
+              <span className="hidden sm:inline">Door-level attribution</span>
             </div>
           </div>
 
           <div className="relative">
             <div aria-hidden className="sip-sunset-halo" />
             <PhoneMockup className="lg:rotate-[-3deg]">
-              <MapScreen />
+              <PromoScreen />
             </PhoneMockup>
           </div>
         </div>
@@ -150,16 +148,16 @@ function Hero() {
 
 const problems = [
   {
-    title: "No real-time visibility",
-    body: "You don't know which bar is packed, quiet, or over capacity until you're already in line. Decisions are made on a coin flip.",
+    title: "Promotions are invisible",
+    body: "Specials, doors, and hours live in stories, DMs, and printed signs. Patrons walk in guessing what still applies — bars repeat the same offer across three platforms and still miss the people next door.",
   },
   {
-    title: "Group plans fragment fast",
-    body: "Three group chats, five screenshots, nobody quite knows the plan. By 11pm half the crew is somewhere else.",
+    title: "Wait and crowd are folklore",
+    body: "From the sidewalk, you can't tell if a bar is empty, packed, or roped. Decisions get made on hearsay, and the wrong bar wins the foot traffic.",
   },
   {
-    title: "Bars fly without signal",
-    body: "Venues have no live demand signal and no direct channel to the people nearby. Marketing is a guess, every night.",
+    title: "Nothing reports back",
+    body: "Bars run real offers with no idea what worked. No funnel, no audience cut, no door-level redemption — just a guess every shift.",
   },
 ];
 
@@ -170,8 +168,8 @@ function Problem() {
         <div className="max-w-2xl">
           <Eyebrow>The problem</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Every night out is planned on screenshots and{" "}
-            <span className="text-cabernet">guesses.</span>
+            Nightlife is the last{" "}
+            <span className="text-cabernet">unmeasured channel.</span>
           </h2>
         </div>
 
@@ -207,36 +205,36 @@ type ProductRowData = {
   eyebrow: string;
   title: string;
   body: string;
-  screen: "map" | "line" | "crew" | "events";
+  screen: "promos" | "map" | "line" | "events";
   align: "left" | "right";
 };
 
 const productRows: ProductRowData[] = [
   {
-    eyebrow: "Live map",
-    title: "See tonight before you leave.",
-    body: "A real-time map of bars, crowd energy, and friends who are out. Every check-in, RSVP, and post updates the map as it happens.",
-    screen: "map",
+    eyebrow: "Promotions",
+    title: "Real promos. Real windows.",
+    body: "Bars schedule campaigns with start and end times; patrons see them in a Promotions feed for tonight and the rest of the week. A time-limited QR redeems at the door — no coupons, no screenshots.",
+    screen: "promos",
     align: "left",
   },
   {
-    eyebrow: "Line intelligence",
-    title: "Know the line before you go.",
-    body: "Wait times, capacity, and live bouncer signal — reported by the people actually in line. No more walking five blocks for a closed rope.",
-    screen: "line",
+    eyebrow: "Live map",
+    title: "The neighborhood, right now.",
+    body: "Bars near you, with patron-submitted wait times, cover, and crowd. Reports expire on the order of hours, so the map reflects the next hour — not last weekend.",
+    screen: "map",
     align: "right",
   },
   {
-    eyebrow: "Crews",
-    title: "Plan with your people.",
-    body: "Persistent friend crews carry from one night to the next. Drop a plan, invite the group, and see who's in with one tap.",
-    screen: "crew",
+    eyebrow: "Line reports",
+    title: "Know the line before you walk.",
+    body: "A photo-first report flow turns five people in line into a public wait time. Submit in seconds; nearby patrons see it for the next couple of hours.",
+    screen: "line",
     align: "left",
   },
   {
-    eyebrow: "Events",
-    title: "Real plans, not screenshots.",
-    body: "Host a night in one tap, invite your crew, see who's in. Public events surface nearby — with live RSVP counts, hosts you know, and a map pin already waiting.",
+    eyebrow: "Events & groups",
+    title: "Plans that aren't a group chat.",
+    body: "Host an event in one tap, invite a friend group or open it to the public, and carry the same group from one night to the next. RSVPs, posts, and check-ins stay attached to the plan.",
     screen: "events",
     align: "right",
   },
@@ -249,8 +247,8 @@ function Product() {
         <div className="max-w-2xl">
           <Eyebrow>The product</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            One app for every part of{" "}
-            <span className="text-ember">every night.</span>
+            One app for both sides of{" "}
+            <span className="text-ember">the night.</span>
           </h2>
         </div>
 
@@ -267,12 +265,12 @@ function Product() {
 function ProductRow({ eyebrow, title, body, screen, align }: ProductRowData) {
   const textFirst = align === "left";
   const Screen =
-    screen === "map"
-      ? MapScreen
-      : screen === "line"
-        ? LineScreen
-        : screen === "crew"
-          ? CrewScreen
+    screen === "promos"
+      ? PromoScreen
+      : screen === "map"
+        ? MapScreen
+        : screen === "line"
+          ? LineScreen
           : PlansScreen;
 
   return (
@@ -303,31 +301,31 @@ function WhySip() {
     <Section id="why" tone="sand">
       <Container>
         <div className="max-w-2xl">
-          <Eyebrow>Why Sip matters</Eyebrow>
+          <Eyebrow>Why Sip</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Both sides of the night, finally on the{" "}
-            <span className="text-cabernet">same map.</span>
+            Two sides of the night,{" "}
+            <span className="text-cabernet">one product.</span>
           </h2>
         </div>
 
         <div className="mt-16 grid gap-10 md:grid-cols-2 md:gap-14 lg:mt-20">
           <WhyCard
-            label="For users"
-            title="Your night, with signal."
+            label="For patrons"
+            title="The night, on a clock."
             points={[
-              "See what's busy and where your crew is, in real time",
-              "Skip the group-chat archaeology — plans live in one place",
-              "Catch limited-time promos from bars you actually go to — before they expire",
+              "Promotions with real start and end times — see what's running tonight and the rest of the week",
+              "Wait, cover, and crowd at nearby bars, reported by patrons already inside",
+              "Events, groups, and posts in one place — RSVP, host, or quietly check the plan",
             ]}
             accent="ember"
           />
           <WhyCard
-            label="For bars"
-            title="A live demand signal — and a direct channel to it."
+            label="For bar operators"
+            title="Door-level attribution, finally."
             points={[
-              "Live headcount, regulars vs. discovery, hour-by-hour traffic",
-              "Targeted promotions to nearby users, sliced by crew and visit history",
-              "The first operator dashboard built for nightlife, not restaurants",
+              "Schedule campaigns with windows; redeem with a time-limited QR at the door",
+              "Targeting by zone, age bracket, and behavioral segment — built on a real audience rollup",
+              "Views → clicks → scans → confirmed redemptions, plus hour-by-hour and day-of-week heatmaps",
             ]}
             accent="cabernet"
           />
@@ -394,13 +392,14 @@ function Showcase() {
       />
       <Container className="relative">
         <div className="mx-auto max-w-2xl text-center">
-          <Eyebrow className="justify-center">Product showcase</Eyebrow>
+          <Eyebrow className="justify-center">In the app</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Minimal. <span className="text-ember">Live.</span>{" "}
-            <span className="text-cabernet">Yours.</span>
+            Feed, bar profile,{" "}
+            <span className="text-ember">groups.</span>
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-muted">
-            The whole night, on one screen. No ads, no infinite scroll.
+            The three surfaces patrons touch most. Every screen below is a 1:1
+            render of what ships in the iOS build today.
           </p>
         </div>
 
@@ -417,7 +416,7 @@ function Showcase() {
           </div>
           <div className="md:-ml-8 md:mt-12 md:self-end">
             <PhoneMockup rotate={5}>
-              <PromoScreen />
+              <GroupsScreen />
             </PhoneMockup>
           </div>
         </div>
@@ -447,12 +446,12 @@ function CTA() {
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow className="justify-center">Get early access</Eyebrow>
           <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            The night is about to get a lot{" "}
-            <span className="text-ember">more visible.</span>
+            Open Sip when we open{" "}
+            <span className="text-ember">your city.</span>
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-muted">
-            Join the waitlist and we&apos;ll let you in as soon as Sip opens in
-            your city.
+            We&apos;re live in private beta in New York. Leave your email and
+            we&apos;ll reach out when the next wave opens.
           </p>
 
           <WaitlistForm />
@@ -471,7 +470,7 @@ function SiteFooter() {
         <div className="flex items-center gap-3">
           <span className="font-serif text-xl text-ink">Sip</span>
           <span className="text-muted/80">
-            — bar promos, crews, and the live map
+            — promotions, line reports, door-level attribution
           </span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
