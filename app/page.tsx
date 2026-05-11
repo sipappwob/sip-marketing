@@ -103,14 +103,17 @@ function Hero() {
             </span>
 
             <h1 className="mt-7 font-serif text-5xl leading-[1.02] sm:text-6xl lg:text-[78px]">
-              <span className="text-cabernet">Targeted promotions.</span>
+              <span className="text-cabernet">What&apos;s live, in one place.</span>
               <br />
+              <span className="text-ink">Targeted promotions.</span>{" "}
               <span className="text-ink">Analytics you can use.</span>
             </h1>
 
             <p className="mt-7 max-w-[520px] text-lg leading-relaxed text-muted">
-              Sip gives bars scheduled campaigns, audience targeting, and funnel
-              analytics — and gives patrons one place to see what&apos;s live nearby.
+              For going out, Sip is where tonight&apos;s offers, the neighborhood
+              map, and real plans show up together. For bars, it&apos;s scheduled
+              campaigns, audience targeting, and funnel analytics — so spend comes
+              with a read on what moved.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <Button href="#contact" variant="primary">
@@ -124,10 +127,10 @@ function Hero() {
             <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-[11px] uppercase tracking-[0.22em] text-muted">
               <span className="flex items-center gap-2">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-ember" />
-                Patron app
+                Tonight &amp; upcoming
               </span>
-              <span>Bar dashboard</span>
-              <span className="hidden sm:inline">Zone &amp; segment reach</span>
+              <span>Patron app</span>
+              <span className="hidden sm:inline">Bar dashboard</span>
             </div>
           </div>
 

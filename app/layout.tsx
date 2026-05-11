@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://sipapp.co"
   ),
-  title: "Sip — Targeted bar promotions & analytics",
+  title: "Sip — See what's live tonight",
   description:
-    "Bars run scheduled, targeted campaigns and read funnel analytics. Patrons see what's live nearby in one app. Private beta in New York.",
+    "One app for tonight's offers, map, and plans. Bars run targeted campaigns and read funnel analytics. Private beta in New York.",
 };
 
 export default function RootLayout({
