@@ -167,7 +167,8 @@ function AppFeatures() {
             Five tabs for patrons.
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-muted">
-            {`Each screen is a coded placeholder based on the shipping iOS UI — not a marketing illustration.`}
+            Feed, promotions, map, bar pages, and profile — the same tabs you use
+            when you go out.
           </p>
         </div>
 
