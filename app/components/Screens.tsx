@@ -1102,6 +1102,63 @@ export function PlansScreen() {
   );
 }
 
+/* ------------------------------- PROFILE ------------------------------- */
+/** Placeholder — matches Profile tab shell; refine against ConsumerOwnProfileView. */
+
+export function ProfileScreen() {
+  return (
+    <ScreenFrame>
+      <ProfileShell className="flex h-full flex-col">
+        <ProfileShell className="min-h-0 flex-1 overflow-hidden px-4 pt-2">
+          <ProfileShell className="flex flex-col items-center text-center">
+            <Avatar initials="WO" color="#5A1220" size={52} />
+            <ProfileShell className="mt-2 font-serif text-[15px] text-ink">@will.o</ProfileShell>
+            <ProfileShell className="mt-0.5 text-[10px] text-muted">
+              Brooklyn · going out tonight
+            </ProfileShell>
+          </ProfileShell>
+          <ProfileShell className="mt-4 grid grid-cols-3 gap-2 rounded-xl border border-hair bg-ivory py-2.5 text-center">
+            {[
+              ["Friends", "42"],
+              ["Following", "18"],
+              ["Groups", "3"],
+            ].map(([label, val]) => (
+              <ProfileShell key={label}>
+                <ProfileShell className="font-serif text-[13px] text-ink">{val}</ProfileShell>
+                <ProfileShell className="text-[8px] uppercase tracking-[0.14em] text-muted">
+                  {label}
+                </ProfileShell>
+              </ProfileShell>
+            ))}
+          </ProfileShell>
+          <ProfileShell className="mt-3 space-y-1.5 pb-2">
+            {["Edit profile", "Friends", "Favorite bars", "Groups"].map((row) => (
+              <ProfileShell
+                key={row}
+                className="flex items-center justify-between rounded-xl border border-hair bg-ivory/80 px-3 py-2.5 text-[11px] text-ink"
+              >
+                <span>{row}</span>
+                <span className="text-muted">›</span>
+              </ProfileShell>
+            ))}
+          </ProfileShell>
+        </ProfileShell>
+        <TabBar active="you" />
+      </ProfileShell>
+    </ScreenFrame>
+  );
+}
+
+function ProfileShell({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={cn(className)}>{children}</div>;
+}
+
 function EventRow({
   event,
 }: {
