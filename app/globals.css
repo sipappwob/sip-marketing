@@ -134,6 +134,63 @@ address {
     0 0 28px -8px rgba(212, 102, 43, 0.55);
 }
 
+/* ------------------------------------------------------------------
+ * Fluid section transitions — feather sand <-> ivory regions so we
+ * never get a hard horizontal line between feature blocks. The .sip-blend
+ * variants are placed as wrapper backgrounds so adjacent sections can
+ * read as one continuous landscape.
+ * ------------------------------------------------------------------ */
+
+.sip-blend-ivory-to-sand {
+  background-image: linear-gradient(
+    180deg,
+    var(--color-ivory) 0%,
+    var(--color-shell) 38%,
+    var(--color-sand) 100%
+  );
+}
+
+.sip-blend-sand-to-ivory {
+  background-image: linear-gradient(
+    180deg,
+    var(--color-sand) 0%,
+    var(--color-shell) 52%,
+    var(--color-ivory) 100%
+  );
+}
+
+.sip-blend-ivory-flat {
+  background-image: linear-gradient(
+    180deg,
+    var(--color-ivory) 0%,
+    var(--color-shell) 50%,
+    var(--color-ivory) 100%
+  );
+}
+
+/* Soft sunset halo that sits behind the phone mockup — already used by
+ * .sip-sunset-halo; this variant is a smaller, denser version we can
+ * stack behind every screenshot for editorial parallax. */
+.sip-glow-warm {
+  position: absolute;
+  inset: -10%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      55% 50% at 55% 40%,
+      rgba(232, 168, 69, 0.34) 0%,
+      rgba(212, 102, 43, 0.16) 32%,
+      rgba(212, 102, 43, 0) 68%
+    ),
+    radial-gradient(
+      42% 46% at 30% 70%,
+      rgba(139, 36, 56, 0.18) 0%,
+      rgba(139, 36, 56, 0) 70%
+    );
+  filter: blur(8px);
+}
+
 /* Ornamental divider — editorial touch between major sections. */
 .sip-ornament {
   display: flex;
