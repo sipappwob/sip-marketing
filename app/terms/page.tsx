@@ -12,7 +12,7 @@ export default function TermsPage() {
     <LegalPage
       eyebrow="Terms"
       title="Terms of Service"
-      effectiveDate="April 22, 2026"
+      effectiveDate="May 28, 2026"
     >
       <p>
         These Terms of Service (the &ldquo;Terms&rdquo;) are an agreement
@@ -171,7 +171,55 @@ export default function TermsPage() {
         granted.
       </p>
 
-      <h2>11. Third-party services</h2>
+      <h2>11. DMCA Notice</h2>
+      <p>
+        Sip respects the intellectual property rights of others and expects
+        users of the platform to do the same.
+      </p>
+      <p>
+        If you believe content available on Sip infringes your copyright,
+        you may submit a notification under the Digital Millennium
+        Copyright Act (DMCA) by providing our designated copyright agent
+        with the following information:
+      </p>
+      <ul>
+        <li>
+          Identification of the copyrighted work claimed to have been
+          infringed
+        </li>
+        <li>
+          Identification of the infringing material and information
+          reasonably sufficient to permit us to locate the material
+        </li>
+        <li>
+          Your contact information, including name, address, telephone
+          number, and email address
+        </li>
+        <li>
+          A statement that you have a good faith belief that the disputed
+          use is not authorized
+        </li>
+        <li>
+          A statement, under penalty of perjury, that the information in
+          the notification is accurate
+        </li>
+        <li>Your physical or electronic signature</li>
+      </ul>
+      <p>DMCA notices should be sent to:</p>
+      <p>
+        Sip Copyright Agent
+        <br />
+        Email:{" "}
+        <a href="mailto:dmca@sipapp.co">dmca@sipapp.co</a>
+      </p>
+      <p>
+        Sip may remove allegedly infringing content and terminate repeat
+        infringers where appropriate. For the full takedown,
+        counter-notification, and repeat-infringer procedures, see our{" "}
+        <a href="/dmca">DMCA &amp; Copyright Policy</a>.
+      </p>
+
+      <h2>12. Third-party services</h2>
       <p>
         Sip runs on third-party infrastructure (Google/Firebase, Apple
         services, Google Sign-In) and may link out to bars, websites, or
@@ -179,7 +227,7 @@ export default function TermsPage() {
         Using them may be subject to their own terms and privacy policies.
       </p>
 
-      <h2>12. Termination</h2>
+      <h2>13. Termination</h2>
       <p>
         You may delete your account at any time from inside the app, or by
         emailing <a href="mailto:sam@sipapp.co">sam@sipapp.co</a>. We may
@@ -190,7 +238,7 @@ export default function TermsPage() {
         resolution) will survive.
       </p>
 
-      <h2>13. Disclaimers</h2>
+      <h2>14. Disclaimers</h2>
       <p>
         To the fullest extent permitted by law, the Service is provided{" "}
         <strong>&ldquo;as is&rdquo;</strong> and{" "}
@@ -202,7 +250,7 @@ export default function TermsPage() {
         secure, or that content submitted by users or venues is accurate.
       </p>
 
-      <h2>14. Limitation of liability</h2>
+      <h2>15. Limitation of liability</h2>
       <p>
         To the fullest extent permitted by law, Sip and its officers,
         directors, employees, and agents will not be liable for any indirect,
@@ -215,7 +263,7 @@ export default function TermsPage() {
         claim.
       </p>
 
-      <h2>15. Indemnity</h2>
+      <h2>16. Indemnity</h2>
       <p>
         You agree to indemnify and hold Sip harmless from claims, damages,
         and expenses (including reasonable attorneys&rsquo; fees) arising
@@ -223,7 +271,7 @@ export default function TermsPage() {
         these Terms.
       </p>
 
-      <h2>16. Dispute resolution and governing law</h2>
+      <h2>17. Dispute resolution and governing law</h2>
       <p>
         These Terms are governed by the laws of the State of New York,
         without regard to conflict-of-laws rules. Any dispute arising out of
@@ -234,7 +282,7 @@ export default function TermsPage() {
         any court of competent jurisdiction.
       </p>
 
-      <h2>17. Apple-specific terms (iOS)</h2>
+      <h2>18. Apple-specific terms (iOS)</h2>
       <p>
         If you obtained the Sip app through the Apple App Store, the
         following also applies. These Terms are between you and Sip only, not
@@ -253,7 +301,7 @@ export default function TermsPage() {
         restricted parties.
       </p>
 
-      <h2>18. Changes to these Terms</h2>
+      <h2>19. Changes to these Terms</h2>
       <p>
         We may update these Terms from time to time. When we make material
         changes we&rsquo;ll update the effective date above and, where
@@ -261,7 +309,7 @@ export default function TermsPage() {
         after the effective date means you accept the updated Terms.
       </p>
 
-      <h2>19. Contact</h2>
+      <h2>20. Contact</h2>
       <p>
         Sip, Inc. — questions, complaints, reports, legal notices:{" "}
         <a href="mailto:sam@sipapp.co">sam@sipapp.co</a>.

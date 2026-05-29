@@ -12,7 +12,7 @@ export default function PrivacyPage() {
     <LegalPage
       eyebrow="Privacy"
       title="Privacy Policy"
-      effectiveDate="April 22, 2026"
+      effectiveDate="May 28, 2026"
     >
       <p>
         Sip is a live map of nightlife — bars, crews, and the people you
@@ -162,19 +162,28 @@ export default function PrivacyPage() {
       </p>
       <ul>
         <li>
-          <strong>Google / Firebase</strong> — Authentication, Firestore,
-          Cloud Storage, Cloud Functions, Hosting, and Crashlytics.
+          <strong>Google / Firebase</strong> &mdash; Authentication,
+          Firestore, Cloud Storage, Cloud Functions, Hosting, and
+          Crashlytics (crash reporting). We rely on Google&rsquo;s data
+          processing addendum so these services act as service providers
+          on our behalf. We do not run Google Analytics, AdMob, or any
+          other Google advertising product against your Sip data.
         </li>
         <li>
-          <strong>Apple</strong> — Push Notification Service, Sign in with
-          Apple (if you choose it), and on-device Vision used for headcount
-          estimation.
+          <strong>Apple</strong> &mdash; Push Notification Service, Sign in
+          with Apple (if you choose it), and on-device Vision used for
+          headcount estimation.
         </li>
         <li>
-          <strong>Google Sign-In</strong> — authentication when you choose it.
+          <strong>Google Sign-In</strong> &mdash; authentication when you
+          choose it.
         </li>
         <li>
-          <strong>Vercel</strong> — hosting for this website.
+          <strong>Vercel</strong> &mdash; hosting for this website.
+        </li>
+        <li>
+          <strong>Resend</strong> &mdash; transactional email delivery
+          (waitlist confirmations, password resets, account notifications).
         </li>
       </ul>
 
@@ -192,12 +201,16 @@ export default function PrivacyPage() {
         as protective.
       </p>
 
-      <h2>We do not sell your data</h2>
+      <h2>We do not sell or share your data for advertising</h2>
       <p>
-        Sip does not sell personal information and does not share it with
-        third parties for their own advertising. Promotions you see inside
-        Sip come from bars on Sip and are targeted using the information in
-        your Sip account — not by external ad networks.
+        Sip does not sell personal information for money. Sip does not
+        share personal information with third parties for cross-context
+        behavioral advertising as those terms are defined under the
+        California Privacy Rights Act (CPRA). We do not run Google
+        Analytics, AdMob, or any other advertising technology against
+        your Sip data. Promotions you see inside Sip come from bars
+        listed on Sip and are targeted using your Sip account
+        information only &mdash; not by external ad networks.
       </p>
 
       <h2>Data retention</h2>
@@ -243,12 +256,6 @@ export default function PrivacyPage() {
           appear in your feed.
         </li>
         <li>
-          <strong>California (CCPA/CPRA):</strong> California residents have
-          the right to know, correct, delete, and limit use of their personal
-          information, and to not be discriminated against for exercising
-          those rights.
-        </li>
-        <li>
           <strong>EEA/UK (GDPR):</strong> if you use Sip from the EEA or UK,
           our legal basis for processing is your consent, performance of our
           contract with you, and our legitimate interest in running a safe,
@@ -256,6 +263,148 @@ export default function PrivacyPage() {
           complaint with your local data-protection authority.
         </li>
       </ul>
+
+      <h2>California privacy rights (CCPA / CPRA)</h2>
+      <p>
+        If you are a California resident, the California Consumer Privacy
+        Act, as amended by the California Privacy Rights Act, gives you the
+        rights described below. The look-back period for the disclosures in
+        this section is the prior twelve months.
+      </p>
+
+      <h3>Categories of personal information we collect</h3>
+      <ul>
+        <li>
+          <strong>Identifiers</strong> &mdash; name, username, email,
+          account ID, IP address, device identifiers.
+        </li>
+        <li>
+          <strong>Customer records</strong> &mdash; date of birth (used to
+          confirm 21+), city, hashed password.
+        </li>
+        <li>
+          <strong>Commercial information</strong> &mdash; promotions you
+          redeem, bars you follow or favorite, events you RSVP to.
+        </li>
+        <li>
+          <strong>Internet and network activity</strong> &mdash; in-app
+          interactions, screens viewed, and crash reports.
+        </li>
+        <li>
+          <strong>Geolocation</strong> &mdash; precise location while the
+          app is in use. This is &ldquo;sensitive personal information&rdquo;
+          under CPRA.
+        </li>
+        <li>
+          <strong>Audio, visual, or similar information</strong> &mdash;
+          photos you upload (posts, profile elements, line-report photos).
+        </li>
+        <li>
+          <strong>Inferences</strong> &mdash; derived signals such as the
+          headcount estimate from a line-report photo or whether you are a
+          regular versus first-time visitor at a bar.
+        </li>
+        <li>
+          <strong>Sensitive personal information</strong> &mdash; precise
+          geolocation and the hashed password used to log in to your account.
+        </li>
+      </ul>
+      <p>
+        Sip does not collect: government identification numbers, financial
+        account information, racial or ethnic origin, religious beliefs,
+        union membership, genetic data, biometric identifiers, health
+        information, or information about sex life or sexual orientation.
+      </p>
+
+      <h3>Where we collect from</h3>
+      <p>
+        Directly from you (account creation and app use); from your device
+        (location, camera, contacts &mdash; with your permission); from
+        authentication providers you choose (Apple, Google); and from other
+        Sip users who interact with you in the product.
+      </p>
+
+      <h3>Why we collect</h3>
+      <p>
+        To operate Sip (map, crews, events, line and crowd intelligence,
+        bar profiles); to authenticate and protect your account; to enforce
+        our <a href="/terms">Terms</a> and respond to abuse, fraud, and
+        safety reports; to comply with legal obligations; and to understand
+        how Sip is used in aggregate so we can improve the product.
+      </p>
+
+      <h3>Who we disclose personal information to</h3>
+      <p>
+        The categories of recipients identified earlier in this policy:
+        service providers operating Sip on our behalf (Google/Firebase,
+        Apple, Vercel, Resend); bars whose venues you check into or
+        represent (limited to the signals and content you share into those
+        surfaces); other Sip users (limited to your visibility settings);
+        and law enforcement or other parties where required by law. We do
+        not sell personal information and we do not share personal
+        information for cross-context behavioral advertising.
+      </p>
+
+      <h3>Your California rights</h3>
+      <ol>
+        <li>
+          <strong>Right to know.</strong> Request the categories and
+          specific pieces of personal information we have collected, the
+          sources, the purposes, and the categories of third parties we
+          disclose to.
+        </li>
+        <li>
+          <strong>Right to correct.</strong> Ask us to correct inaccurate
+          personal information we hold about you.
+        </li>
+        <li>
+          <strong>Right to delete.</strong> Request deletion of personal
+          information we hold about you, subject to limited statutory
+          exceptions (for example, completing a transaction you requested,
+          security, or legal compliance).
+        </li>
+        <li>
+          <strong>Right to opt out of sale or sharing.</strong> We do not
+          sell personal information and we do not share personal
+          information for cross-context behavioral advertising, so there
+          is nothing to opt out of today. If that ever changes, we will
+          update this policy, notify you in the app, and add the
+          opt-out mechanism required by California law.
+        </li>
+        <li>
+          <strong>Right to limit the use of sensitive personal
+          information.</strong> Sip already limits the use of sensitive
+          personal information (precise geolocation, hashed credentials)
+          to providing the service you requested and to safety and fraud
+          purposes permitted by law. You may ask us in writing to further
+          restrict our use.
+        </li>
+        <li>
+          <strong>Right to non-discrimination.</strong> We will not deny
+          service, charge different prices, or provide a different quality
+          of service because you exercised any of these rights.
+        </li>
+        <li>
+          <strong>Authorized agents.</strong> You may designate an
+          authorized agent to make a request on your behalf, with written
+          authorization that we can verify.
+        </li>
+      </ol>
+
+      <h3>How to exercise your California rights</h3>
+      <p>
+        Email{" "}
+        <a href="mailto:sam@sipapp.co?subject=California%20privacy%20request">
+          sam@sipapp.co
+        </a>{" "}
+        with the subject line &ldquo;California privacy request&rdquo; and
+        tell us which right you want to exercise. We will verify your
+        identity by asking for information that matches your Sip account.
+        We respond within 45 days, with one 45-day extension if reasonably
+        necessary (we will tell you in writing if we need the extension).
+        You can also delete your account from inside the app at
+        <em> Edit profile &rarr; Delete my account</em>.
+      </p>
 
       <h2>Security</h2>
       <p>
@@ -284,6 +433,54 @@ export default function PrivacyPage() {
         When we make material changes, we&rsquo;ll update the effective date
         above and, where appropriate, notify you inside the app before the
         change takes effect.
+      </p>
+
+      <h2>DMCA Notice</h2>
+      <p>
+        Sip respects the intellectual property rights of others and expects
+        users of the platform to do the same.
+      </p>
+      <p>
+        If you believe content available on Sip infringes your copyright,
+        you may submit a notification under the Digital Millennium
+        Copyright Act (DMCA) by providing our designated copyright agent
+        with the following information:
+      </p>
+      <ul>
+        <li>
+          Identification of the copyrighted work claimed to have been
+          infringed
+        </li>
+        <li>
+          Identification of the infringing material and information
+          reasonably sufficient to permit us to locate the material
+        </li>
+        <li>
+          Your contact information, including name, address, telephone
+          number, and email address
+        </li>
+        <li>
+          A statement that you have a good faith belief that the disputed
+          use is not authorized
+        </li>
+        <li>
+          A statement, under penalty of perjury, that the information in
+          the notification is accurate
+        </li>
+        <li>Your physical or electronic signature</li>
+      </ul>
+      <p>DMCA notices should be sent to:</p>
+      <p>
+        Sip Copyright Agent
+        <br />
+        Email:{" "}
+        <a href="mailto:dmca@sipapp.co">dmca@sipapp.co</a>
+      </p>
+      <p>
+        Sip may remove allegedly infringing content and terminate repeat
+        infringers where appropriate. Full takedown and
+        counter-notification procedures are in our{" "}
+        <a href="/dmca">DMCA &amp; Copyright Policy</a>.
       </p>
 
       <h2>Contact</h2>

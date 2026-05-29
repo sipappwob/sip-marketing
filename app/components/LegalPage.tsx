@@ -93,6 +93,9 @@ function LegalFooter() {
           <Link href="/terms" className="transition-colors hover:text-ink">
             Terms
           </Link>
+          <Link href="/dmca" className="transition-colors hover:text-ink">
+            DMCA
+          </Link>
           <a
             href="mailto:sam@sipapp.co"
             className="transition-colors hover:text-ink"

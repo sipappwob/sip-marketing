@@ -445,6 +445,9 @@ function FooterNav() {
       <a href="/terms" className="transition-colors hover:text-ink">
         Terms
       </a>
+      <a href="/dmca" className="transition-colors hover:text-ink">
+        DMCA
+      </a>
     </div>
   );
 }
