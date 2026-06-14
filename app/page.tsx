@@ -455,7 +455,7 @@ function FooterNav() {
 function FooterMeta() {
   return (
     <FooterMetaInner>
-      <div>{`© ${new Date().getFullYear()} Sip, Inc.`}</div>
+      <div>© 2026 White Pine Enterprises, LLC</div>
       <div className="text-muted/70">
         Security &amp; abuse:{" "}
         <a

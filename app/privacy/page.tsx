@@ -26,7 +26,7 @@ export default function PrivacyPage() {
       <p>
         This policy applies to the Sip mobile app, the Sip website at{" "}
         <a href="https://sipapp.co">sipapp.co</a>, and any related services
-        operated by Sip, Inc. (&ldquo;Sip,&rdquo; &ldquo;we,&rdquo;
+        operated by White Pine Enterprises, LLC (&ldquo;Sip,&rdquo; &ldquo;we,&rdquo;
         &ldquo;us&rdquo;). By using Sip you agree to this policy and to our{" "}
         <a href="/terms">Terms of Service</a>.
       </p>
@@ -471,10 +471,10 @@ export default function PrivacyPage() {
       </ul>
       <p>DMCA notices should be sent to:</p>
       <p>
-        Sip Copyright Agent
+        White Pine Enterprises, LLC Copyright Agent
         <br />
         Email:{" "}
-        <a href="mailto:dmca@sipapp.co">dmca@sipapp.co</a>
+        <a href="mailto:sam@sipapp.co">sam@sipapp.co</a>
       </p>
       <p>
         Sip may remove allegedly infringing content and terminate repeat
@@ -485,7 +485,7 @@ export default function PrivacyPage() {
 
       <h2>Contact</h2>
       <p>
-        Sip, Inc. — privacy questions, deletion requests, and complaints:{" "}
+        White Pine Enterprises, LLC — privacy questions, deletion requests, and complaints:{" "}
         <a href="mailto:sam@sipapp.co">sam@sipapp.co</a>.
       </p>
     </LegalPage>

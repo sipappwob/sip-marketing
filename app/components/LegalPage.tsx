@@ -104,7 +104,7 @@ function LegalFooter() {
           </a>
         </div>
         <div className="text-muted/80">
-          © {new Date().getFullYear()} Sip, Inc.
+          © 2026 White Pine Enterprises, LLC
         </div>
       </Container>
     </footer>

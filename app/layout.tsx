@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   applicationName: "Sip",
-  authors: [{ name: "Sip, Inc." }],
+  authors: [{ name: "White Pine Enterprises, LLC" }],
   generator: "Next.js",
   keywords: [
     "live bar wait times",

@@ -61,10 +61,10 @@ export default function DMCAPage() {
       <h2>Designated copyright agent</h2>
       <p>DMCA notifications should be sent to:</p>
       <p>
-        Sip, Inc. &mdash; Copyright Agent
+        White Pine Enterprises, LLC &mdash; Copyright Agent
         <br />
         Email:{" "}
-        <a href="mailto:dmca@sipapp.co">dmca@sipapp.co</a>
+        <a href="mailto:sam@sipapp.co">sam@sipapp.co</a>
       </p>
       <p>
         Notices that do not substantially comply with the requirements
@@ -99,7 +99,7 @@ export default function DMCAPage() {
         If we removed or disabled access to content you posted and you
         believe the removal was the result of a mistake or
         misidentification, you may submit a counter-notification to{" "}
-        <a href="mailto:dmca@sipapp.co">dmca@sipapp.co</a> that includes:
+        <a href="mailto:sam@sipapp.co">sam@sipapp.co</a> that includes:
       </p>
       <ol>
         <li>Your physical or electronic signature.</li>

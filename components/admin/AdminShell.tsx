@@ -69,6 +69,7 @@ export default function AdminShell({ children }: AdminShellProps) {
       { href: "/admin/bar-admins", label: "Bar admins" },
       { href: "/admin/access", label: "Early access" },
       { href: "/admin/users", label: "Users" },
+      { href: "/admin/dmca", label: "DMCA" },
     ],
     []
   );

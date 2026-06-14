@@ -10,6 +10,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { firestore } from "../../../lib/firebase-client";
+import { isDemoOrBotUser } from "../../../lib/demo-user";
 
 interface UserDocData {
   username?: string;
@@ -18,11 +19,13 @@ interface UserDocData {
   accountType?: string;
   ageBracket?: string;
   createdAt?: Timestamp;
+  isDemoAccount?: boolean;
 }
 type UserDoc = UserDocData & { id: string };
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserDoc[] | null>(null);
+  const [hiddenDemoCount, setHiddenDemoCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,12 +40,13 @@ export default function AdminUsersPage() {
           )
         );
         if (cancelled) return;
-        setUsers(
-          snap.docs.map((d) => ({
-            ...(d.data() as UserDocData),
-            id: d.id,
-          }))
-        );
+        const all = snap.docs.map((d) => ({
+          ...(d.data() as UserDocData),
+          id: d.id,
+        }));
+        const real = all.filter((u) => !isDemoOrBotUser(u.id, u));
+        setHiddenDemoCount(all.length - real.length);
+        setUsers(real);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to load.");
       }
@@ -74,7 +78,9 @@ export default function AdminUsersPage() {
       <div>
         <h1 className="text-2xl font-semibold">Users</h1>
         <p className="text-sm text-ink/60 mt-1">
-          Showing the {users?.length ?? "…"} most recent users (capped at 500).
+          Showing the {users?.length ?? "…"} most recent real users (capped at
+          500). Demo / bot accounts are hidden
+          {hiddenDemoCount > 0 ? ` (${hiddenDemoCount} filtered)` : ""}.
         </p>
       </div>
 

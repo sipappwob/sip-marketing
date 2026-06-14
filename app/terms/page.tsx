@@ -16,7 +16,7 @@ export default function TermsPage() {
     >
       <p>
         These Terms of Service (the &ldquo;Terms&rdquo;) are an agreement
-        between you and Sip, Inc. (&ldquo;Sip,&rdquo; &ldquo;we,&rdquo;
+        between you and White Pine Enterprises, LLC (&ldquo;Sip,&rdquo; &ldquo;we,&rdquo;
         &ldquo;us&rdquo;) covering your use of the Sip mobile app, the Sip
         website at <a href="https://sipapp.co">sipapp.co</a>, and related
         services (collectively, the &ldquo;Service&rdquo;). By creating an
@@ -207,10 +207,10 @@ export default function TermsPage() {
       </ul>
       <p>DMCA notices should be sent to:</p>
       <p>
-        Sip Copyright Agent
+        White Pine Enterprises, LLC Copyright Agent
         <br />
         Email:{" "}
-        <a href="mailto:dmca@sipapp.co">dmca@sipapp.co</a>
+        <a href="mailto:sam@sipapp.co">sam@sipapp.co</a>
       </p>
       <p>
         Sip may remove allegedly infringing content and terminate repeat
@@ -311,7 +311,7 @@ export default function TermsPage() {
 
       <h2>20. Contact</h2>
       <p>
-        Sip, Inc. — questions, complaints, reports, legal notices:{" "}
+        White Pine Enterprises, LLC — questions, complaints, reports, legal notices:{" "}
         <a href="mailto:sam@sipapp.co">sam@sipapp.co</a>.
       </p>
     </LegalPage>
