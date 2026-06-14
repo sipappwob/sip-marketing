@@ -1,19 +1,21 @@
 /**
  * Firebase Web SDK singleton for the gated admin pages.
  *
- * Reads NEXT_PUBLIC_FIREBASE_* env vars (set in Vercel for the marketing app).
- * These values are safe to ship in the client bundle — Firebase security
- * relies on Firestore rules + Auth, not on hiding the API key.
- *
- * Required envs:
+ * Staging / Preview / local dev — keep existing Vercel names (sip-staging-70488):
  *   NEXT_PUBLIC_FIREBASE_API_KEY
  *   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
  *   NEXT_PUBLIC_FIREBASE_PROJECT_ID
  *   NEXT_PUBLIC_FIREBASE_APP_ID
+ *   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET (optional)
+ *   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID (optional)
  *
- * Optional:
- *   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
- *   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+ * Production only (www.sipapp.co) — add separate *_PROD_* vars (sip-prod-29422):
+ *   NEXT_PUBLIC_FIREBASE_PROD_API_KEY
+ *   NEXT_PUBLIC_FIREBASE_PROD_AUTH_DOMAIN
+ *   NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID
+ *   NEXT_PUBLIC_FIREBASE_PROD_APP_ID
+ *   NEXT_PUBLIC_FIREBASE_PROD_STORAGE_BUCKET (optional)
+ *   NEXT_PUBLIC_FIREBASE_PROD_MESSAGING_SENDER_ID (optional)
  */
 "use client";
 
@@ -27,15 +29,58 @@ import {
 import { getFirestore, type Firestore } from "firebase/firestore";
 import { getFunctions, httpsCallable, type Functions } from "firebase/functions";
 
-const config = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
-  messagingSenderId:
-    process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
+type FirebaseWebConfig = {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
 };
+
+function readProdConfig(): FirebaseWebConfig {
+  return {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_PROD_API_KEY ?? "",
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_PROD_AUTH_DOMAIN ?? "",
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID ?? "",
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_PROD_STORAGE_BUCKET ?? "",
+    messagingSenderId:
+      process.env.NEXT_PUBLIC_FIREBASE_PROD_MESSAGING_SENDER_ID ?? "",
+    appId: process.env.NEXT_PUBLIC_FIREBASE_PROD_APP_ID ?? "",
+  };
+}
+
+function readDefaultConfig(): FirebaseWebConfig {
+  return {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
+    messagingSenderId:
+      process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
+  };
+}
+
+function isComplete(c: FirebaseWebConfig): boolean {
+  return Boolean(c.apiKey && c.authDomain && c.projectId && c.appId);
+}
+
+function resolveFirebaseConfig(): FirebaseWebConfig {
+  const onProd = process.env.VERCEL_ENV === "production";
+
+  if (onProd) {
+    const prod = readProdConfig();
+    if (isComplete(prod)) return prod;
+  }
+
+  const staging = readDefaultConfig();
+  if (isComplete(staging)) return staging;
+
+  return onProd ? readProdConfig() : staging;
+}
+
+const config = resolveFirebaseConfig();
 
 let cachedApp: FirebaseApp | null = null;
 let cachedFunctions: Functions | null = null;
@@ -56,7 +101,7 @@ function ensureApp(): FirebaseApp {
     !config.appId
   ) {
     throw new Error(
-      "Firebase web config incomplete — set NEXT_PUBLIC_FIREBASE_API_KEY, AUTH_DOMAIN, PROJECT_ID, and APP_ID in Vercel."
+      "Firebase web config incomplete — on production set NEXT_PUBLIC_FIREBASE_PROD_*; otherwise set NEXT_PUBLIC_FIREBASE_* (staging)."
     );
   }
   cachedApp = getApps().length ? getApp() : initializeApp(config);
@@ -107,4 +152,98 @@ export function ensureAuthPersistence(): Promise<void> {
 export function firestore(): Firestore {
   ensureBrowser();
   return getFirestore(ensureApp());
+}
+
+// ——— DMCA Super Admin callables (see docs/DMCA_SOP.md) ———
+
+export type DmcaPostLookup = {
+  postId: string;
+  authorId: string | null;
+  authorUsername: string | null;
+  eventTitle: string | null;
+  description: string | null;
+  moderationStatus: string;
+  copyrightStrikes: number;
+  repeatInfringerThreshold: number;
+};
+
+export type DmcaLogRow = {
+  id: string;
+  type: string;
+  postId?: string | null;
+  authorId?: string | null;
+  notes?: string | null;
+  performedByEmail?: string | null;
+  createdAt: number | null;
+};
+
+function callableErrorMessage(err: unknown): string {
+  if (err && typeof err === "object" && "message" in err) {
+    return String((err as { message: string }).message);
+  }
+  return "Request failed.";
+}
+
+export async function adminDmcaLookupPost(postId: string): Promise<DmcaPostLookup> {
+  const fn = httpsCallable<{ postId: string }, DmcaPostLookup>(
+    firebaseFunctions(),
+    "adminDmcaLookupPost"
+  );
+  try {
+    const res = await fn({ postId: postId.trim() });
+    return res.data;
+  } catch (e) {
+    throw new Error(callableErrorMessage(e));
+  }
+}
+
+export async function adminDmcaRemovePost(params: {
+  postId: string;
+  dmcaNoticeId?: string;
+  notes?: string;
+  source?: string;
+}): Promise<{ message: string; repeatInfringerFlag: boolean; copyrightStrikes: number }> {
+  const fn = httpsCallable<
+    typeof params,
+    { message: string; repeatInfringerFlag: boolean; copyrightStrikes: number }
+  >(firebaseFunctions(), "adminDmcaRemovePost");
+  try {
+    const res = await fn(params);
+    return res.data;
+  } catch (e) {
+    throw new Error(callableErrorMessage(e));
+  }
+}
+
+export async function adminDmcaRecordLog(params: {
+  type: "notice_received" | "counter_notice" | "restored" | "termination";
+  postId?: string;
+  authorId?: string;
+  dmcaNoticeId?: string;
+  notes?: string;
+  counterNoticeFrom?: string;
+  originalComplainantEmail?: string;
+}): Promise<void> {
+  const fn = httpsCallable<typeof params, { ok: true }>(
+    firebaseFunctions(),
+    "adminDmcaRecordLog"
+  );
+  try {
+    await fn(params);
+  } catch (e) {
+    throw new Error(callableErrorMessage(e));
+  }
+}
+
+export async function adminDmcaListLogs(limit = 50): Promise<DmcaLogRow[]> {
+  const fn = httpsCallable<{ limit: number }, { logs: DmcaLogRow[] }>(
+    firebaseFunctions(),
+    "adminDmcaListLogs"
+  );
+  try {
+    const res = await fn({ limit });
+    return res.data.logs ?? [];
+  } catch (e) {
+    throw new Error(callableErrorMessage(e));
+  }
 }
