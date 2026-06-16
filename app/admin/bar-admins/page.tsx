@@ -2,46 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  collection,
-  doc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  Timestamp,
-  updateDoc,
-  where,
-} from "firebase/firestore";
-import { firebaseAuth, firestore } from "../../../lib/firebase-client";
+  listBarAdminsAdmin,
+  setBarAdminStatusAdmin,
+  type BarAdminRow,
+  type BarAdminValidationRow,
+} from "../../../lib/firebase-client";
 
-interface AssignedBar {
-  barId: string;
-  role?: string;
-  status?: string;
-}
+type BarAdmin = BarAdminRow;
+type Validation = BarAdminValidationRow;
 
-interface BarAdminData {
-  status?: string;
-  email?: string;
-  displayName?: string;
-  assignedBars?: AssignedBar[];
-  createdAt?: Timestamp;
-  updatedAt?: Timestamp;
+function formatMillis(ms: number | null | undefined): string {
+  if (ms == null || !Number.isFinite(ms)) return "—";
+  return new Date(ms).toLocaleString();
 }
-type BarAdmin = BarAdminData & { id: string };
-
-interface ValidationData {
-  uid?: string;
-  barId?: string;
-  barName?: string;
-  email?: string;
-  status?: string;
-  createdAt?: Timestamp;
-  expiresAt?: Timestamp;
-  lastSentAt?: Timestamp;
-  sendCount?: number;
-}
-type Validation = ValidationData & { id: string };
 
 export default function AdminBarAdminsPage() {
   const [admins, setAdmins] = useState<BarAdmin[] | null>(null);
@@ -51,36 +24,10 @@ export default function AdminBarAdminsPage() {
 
   const load = useCallback(async () => {
     try {
-      const fs = firestore();
-      const [aSnap, vSnap] = await Promise.all([
-        getDocs(
-          query(
-            collection(fs, "bar_admins"),
-            orderBy("status"),
-            limit(500)
-          )
-        ),
-        getDocs(
-          query(
-            collection(fs, "bar_admin_validations"),
-            where("status", "==", "pending"),
-            orderBy("createdAt", "desc"),
-            limit(200)
-          )
-        ),
-      ]);
-      setAdmins(
-        aSnap.docs.map((d) => ({
-          ...(d.data() as BarAdminData),
-          id: d.id,
-        }))
-      );
-      setValidations(
-        vSnap.docs.map((d) => ({
-          ...(d.data() as ValidationData),
-          id: d.id,
-        }))
-      );
+      const { admins: rows, validations: tokens } = await listBarAdminsAdmin();
+      setAdmins(rows);
+      setValidations(tokens);
+      setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load.");
     }
@@ -90,30 +37,11 @@ export default function AdminBarAdminsPage() {
     load();
   }, [load]);
 
-  async function setStatus(admin: BarAdmin, status: "active" | "revoked") {
-    const uid = firebaseAuth().currentUser?.uid;
-    if (!uid) {
-      setError("Not signed in.");
-      return;
-    }
+  async function setStatus(admin: BarAdmin, status: "active" | "rejected") {
     setBusyId(admin.id);
     setError(null);
     try {
-      const update: Record<string, unknown> = {
-        status,
-        reviewedBy: uid,
-        reviewedAt: new Date().toISOString(),
-      };
-      // Mirror the top-level status onto each assigned bar so existing
-      // bar-admin UI / Cloud Functions that read `assignedBars[*].status`
-      // see the change.
-      if (admin.assignedBars?.length) {
-        update.assignedBars = admin.assignedBars.map((a) => ({
-          ...a,
-          status: status === "active" ? "active" : "revoked",
-        }));
-      }
-      await updateDoc(doc(firestore(), "bar_admins", admin.id), update);
+      await setBarAdminStatusAdmin(admin.id, status);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Action failed.");
@@ -130,8 +58,11 @@ export default function AdminBarAdminsPage() {
     () => admins?.filter((a) => a.status === "active") ?? [],
     [admins]
   );
-  const revoked = useMemo(
-    () => admins?.filter((a) => a.status === "revoked") ?? [],
+  const rejected = useMemo(
+    () =>
+      admins?.filter(
+        (a) => a.status === "rejected" || a.status === "revoked"
+      ) ?? [],
     [admins]
   );
 
@@ -167,7 +98,7 @@ export default function AdminBarAdminsPage() {
             }}
             secondaryAction={{
               label: "Revoke",
-              onClick: () => setStatus(a, "revoked"),
+              onClick: () => setStatus(a, "rejected"),
             }}
             busy={busyId === a.id}
           />
@@ -186,7 +117,7 @@ export default function AdminBarAdminsPage() {
             primaryAction={null}
             secondaryAction={{
               label: "Revoke",
-              onClick: () => setStatus(a, "revoked"),
+              onClick: () => setStatus(a, "rejected"),
             }}
             busy={busyId === a.id}
           />
@@ -194,12 +125,12 @@ export default function AdminBarAdminsPage() {
         loading={admins === null}
       />
 
-      {revoked.length > 0 && (
+      {rejected.length > 0 && (
         <Section
           title="Revoked"
-          count={revoked.length}
+          count={rejected.length}
           emptyText=""
-          rows={revoked.map((a) => (
+          rows={rejected.map((a) => (
             <AdminRow
               key={a.id}
               admin={a}
@@ -245,10 +176,10 @@ export default function AdminBarAdminsPage() {
                     <td className="px-3 py-2 font-medium">{v.barName}</td>
                     <td className="px-3 py-2 font-mono text-xs">{v.email}</td>
                     <td className="px-3 py-2 text-xs text-ink/60">
-                      {v.createdAt?.toDate().toLocaleString() ?? "—"}
+                      {formatMillis(v.createdAt)}
                     </td>
                     <td className="px-3 py-2 text-xs text-ink/60">
-                      {v.expiresAt?.toDate().toLocaleString() ?? "—"}
+                      {formatMillis(v.expiresAt)}
                     </td>
                     <td className="px-3 py-2 text-xs text-ink/60">
                       {v.sendCount ?? 1}×

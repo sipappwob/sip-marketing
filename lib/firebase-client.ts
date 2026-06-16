@@ -247,3 +247,69 @@ export async function adminDmcaListLogs(limit = 50): Promise<DmcaLogRow[]> {
     throw new Error(callableErrorMessage(e));
   }
 }
+
+// ——— Bar admin Super Admin callables ———
+
+export type BarAdminAssignmentRow = {
+  barId: string;
+  role?: string;
+  status?: string;
+};
+
+export type BarAdminRow = {
+  id: string;
+  status: string | null;
+  email: string | null;
+  displayName: string | null;
+  assignedBars: BarAdminAssignmentRow[];
+  createdAt: number | null;
+  updatedAt: number | null;
+  decidedAt: number | null;
+};
+
+export type BarAdminValidationRow = {
+  id: string;
+  uid: string | null;
+  barId: string | null;
+  barName: string | null;
+  email: string | null;
+  status: string | null;
+  createdAt: number | null;
+  expiresAt: number | null;
+  lastSentAt: number | null;
+  sendCount: number | null;
+};
+
+export async function listBarAdminsAdmin(): Promise<{
+  admins: BarAdminRow[];
+  validations: BarAdminValidationRow[];
+}> {
+  const fn = httpsCallable<
+    Record<string, never>,
+    { admins: BarAdminRow[]; validations: BarAdminValidationRow[] }
+  >(firebaseFunctions(), "superAdminListBarAdmins");
+  try {
+    const res = await fn({});
+    return {
+      admins: res.data.admins ?? [],
+      validations: res.data.validations ?? [],
+    };
+  } catch (e) {
+    throw new Error(callableErrorMessage(e));
+  }
+}
+
+export async function setBarAdminStatusAdmin(
+  adminUid: string,
+  status: "active" | "rejected"
+): Promise<void> {
+  const fn = httpsCallable<
+    { adminUid: string; status: "active" | "rejected" },
+    { ok: true }
+  >(firebaseFunctions(), "superAdminSetBarAdminStatus");
+  try {
+    await fn({ adminUid, status });
+  } catch (e) {
+    throw new Error(callableErrorMessage(e));
+  }
+}
