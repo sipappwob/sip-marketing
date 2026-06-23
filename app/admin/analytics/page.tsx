@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import {
   getPlatformAnalytics,
+  pingSuperAdmin,
   type PlatformAnalytics,
   type WindowTotals,
 } from "../../../lib/firebase-client";
@@ -74,6 +75,19 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [win, setWin] = useState<WindowKey>("last7");
+  const [diag, setDiag] = useState<string | null>(null);
+
+  async function runDiag() {
+    setDiag(null);
+    try {
+      const p = await pingSuperAdmin();
+      setDiag(
+        `Callable OK · project ${p.projectId ?? "?"} · uid ${p.uid.slice(0, 8)}…`
+      );
+    } catch (e) {
+      setDiag(e instanceof Error ? e.message : "Ping failed.");
+    }
+  }
 
   const load = useCallback(async (refresh: boolean) => {
     refresh ? setRefreshing(true) : setLoading(true);
@@ -129,14 +143,37 @@ export default function AnalyticsPage() {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
-          {error}
-        </p>
+        <div className="space-y-2">
+          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+            {error}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => load(false)}
+              className="text-xs px-3 py-1.5 rounded-md border border-ink/20 hover:bg-ink/5"
+            >
+              Retry
+            </button>
+            <button
+              type="button"
+              onClick={runDiag}
+              className="text-xs px-3 py-1.5 rounded-md border border-ink/20 hover:bg-ink/5"
+            >
+              Test callable connection
+            </button>
+          </div>
+          {diag && (
+            <p className="text-xs text-ink/60 bg-ink/5 border border-ink/10 rounded-md px-3 py-2">
+              {diag}
+            </p>
+          )}
+        </div>
       )}
 
-      {loading || !data || !w ? (
+      {loading ? (
         <p className="text-sm text-ink/60">Loading analytics…</p>
-      ) : (
+      ) : !error && data && w ? (
         <>
           <ExecutiveOverview data={data} w={w} winLabel={WINDOW_LABELS[win]} />
           <Trends data={data} />
@@ -151,7 +188,9 @@ export default function AnalyticsPage() {
             {tsToDate(data.meta.computedAt)}
           </p>
         </>
-      )}
+      ) : !error ? (
+        <p className="text-sm text-ink/60">No analytics data yet. Run Recompute or the backfill script.</p>
+      ) : null}
     </div>
   );
 }

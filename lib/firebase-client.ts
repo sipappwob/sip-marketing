@@ -27,7 +27,7 @@ import {
   browserLocalPersistence,
 } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
-import { getFunctions, httpsCallable, type Functions } from "firebase/functions";
+import { getFunctions, httpsCallable, type Functions, FunctionsError } from "firebase/functions";
 
 type FirebaseWebConfig = {
   apiKey: string;
@@ -178,28 +178,47 @@ export type DmcaLogRow = {
 };
 
 function callableErrorMessage(err: unknown): string {
-  if (err && typeof err === "object") {
-    const e = err as {
-      code?: string;
-      message?: string;
-      details?: unknown;
-    };
-    // Firebase FunctionsError often sets message to the literal "internal";
-    // the real text is sometimes in `details` or the server-thrown message.
-    if (typeof e.details === "string" && e.details.length > 0) {
-      return e.details;
+  console.error("[callable error]", err);
+  if (err instanceof FunctionsError) {
+    const code = err.code.replace(/^functions\//, "");
+    const details =
+      err.details != null && String(err.details).length > 0
+        ? String(err.details)
+        : null;
+    if (details && details !== "internal") {
+      return `${code}: ${details}`;
     }
-    if (e.message && e.message !== "internal") {
-      const code = e.code?.replace(/^functions\//, "");
-      return code && code !== "internal"
-        ? `${code}: ${e.message}`
-        : e.message;
+    if (err.message && err.message !== "internal") {
+      return `${code}: ${err.message}`;
     }
-    if (e.code) {
-      return e.code.replace(/^functions\//, "");
+    if (code === "internal") {
+      return (
+        "Cloud Function failed (internal). This usually means the function " +
+        "crashed or its response was not JSON-safe. Redeploy the latest " +
+        "functions from Sip main, then hard-refresh. Check Firebase " +
+        "console → Functions → Logs for superAdminGetAnalytics."
+      );
     }
+    if (code === "unauthenticated") {
+      return "Not signed in — reload and sign in again.";
+    }
+    if (code === "permission-denied") {
+      return "Not authorized — your uid must be in super_admins.";
+    }
+    return `${code}: request failed`;
+  }
+  if (err && typeof err === "object" && "message" in err) {
+    const msg = String((err as { message: string }).message);
+    if (msg && msg !== "internal") return msg;
   }
   return "Request failed.";
+}
+
+async function ensureCallableAuth(): Promise<void> {
+  await ensureAuthPersistence();
+  const user = firebaseAuth().currentUser;
+  if (!user) throw new Error("Not signed in.");
+  await user.getIdToken(true);
 }
 
 export async function adminDmcaLookupPost(postId: string): Promise<DmcaPostLookup> {
@@ -302,6 +321,7 @@ export async function listBarAdminsAdmin(): Promise<{
   admins: BarAdminRow[];
   validations: BarAdminValidationRow[];
 }> {
+  await ensureCallableAuth();
   const fn = httpsCallable<
     Record<string, never>,
     { admins: BarAdminRow[]; validations: BarAdminValidationRow[] }
@@ -321,6 +341,7 @@ export async function setBarAdminStatusAdmin(
   adminUid: string,
   status: "active" | "rejected"
 ): Promise<void> {
+  await ensureCallableAuth();
   const fn = httpsCallable<
     { adminUid: string; status: "active" | "rejected" },
     { ok: true }
@@ -422,9 +443,25 @@ export interface PlatformAnalytics {
   heatmap: { hourly: Record<string, number>; dayOfWeek: Record<string, number> };
 }
 
+export async function pingSuperAdmin(): Promise<{
+  ok: true;
+  uid: string;
+  projectId: string | null;
+  at: number;
+}> {
+  await ensureCallableAuth();
+  const fn = httpsCallable<
+    Record<string, never>,
+    { ok: true; uid: string; projectId: string | null; at: number }
+  >(firebaseFunctions(), "superAdminPing");
+  const res = await fn({});
+  return res.data;
+}
+
 export async function getPlatformAnalytics(
   refresh = false
 ): Promise<PlatformAnalytics> {
+  await ensureCallableAuth();
   const fn = httpsCallable<{ refresh: boolean }, PlatformAnalytics>(
     firebaseFunctions(),
     "superAdminGetAnalytics"
