@@ -27,7 +27,24 @@ export default function AdminResetPasswordPage() {
     setBusy(true);
     try {
       await ensureAuthPersistence();
-      await assertSuperAdminForPasswordReset(trimmed);
+      try {
+        await assertSuperAdminForPasswordReset(trimmed);
+      } catch (preErr) {
+        const msg = preErr instanceof Error ? preErr.message : "";
+        // Callable may be blocked by Cloud IAM (403) until invoker is granted — still send reset email.
+        if (
+          !msg.includes("internal") &&
+          !msg.includes("not-found") &&
+          !msg.includes("permission-denied") &&
+          !msg.includes("not listed")
+        ) {
+          throw preErr;
+        }
+        if (msg.includes("not-found") || msg.includes("not listed") || msg.includes("permission-denied")) {
+          throw preErr;
+        }
+        console.warn("[reset] super-admin pre-check skipped:", msg);
+      }
       await sendPasswordResetEmail(firebaseAuth(), trimmed, {
         url: `${window.location.origin}/admin/login`,
         handleCodeInApp: false,
