@@ -178,8 +178,26 @@ export type DmcaLogRow = {
 };
 
 function callableErrorMessage(err: unknown): string {
-  if (err && typeof err === "object" && "message" in err) {
-    return String((err as { message: string }).message);
+  if (err && typeof err === "object") {
+    const e = err as {
+      code?: string;
+      message?: string;
+      details?: unknown;
+    };
+    // Firebase FunctionsError often sets message to the literal "internal";
+    // the real text is sometimes in `details` or the server-thrown message.
+    if (typeof e.details === "string" && e.details.length > 0) {
+      return e.details;
+    }
+    if (e.message && e.message !== "internal") {
+      const code = e.code?.replace(/^functions\//, "");
+      return code && code !== "internal"
+        ? `${code}: ${e.message}`
+        : e.message;
+    }
+    if (e.code) {
+      return e.code.replace(/^functions\//, "");
+    }
   }
   return "Request failed.";
 }
