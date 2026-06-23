@@ -191,19 +191,32 @@ function ensureApp(): FirebaseApp {
     );
   }
   if (shouldUseProdFirebase() && config.projectId !== PROD_PROJECT_ID) {
-    throw new Error(
-      `Production admin is using Firebase project "${config.projectId}" but must use ` +
-        `${PROD_PROJECT_ID}. Check NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID on Vercel ` +
-        "(not sip-staging-70488), redeploy Production, sign out, and sign in again."
+    console.warn(
+      "[firebase] Production host is using",
+      config.projectId,
+      "— super-admin callables need",
+      PROD_PROJECT_ID,
+      "after a Production redeploy with NEXT_PUBLIC_FIREBASE_PROD_* vars."
     );
   }
   const appName = config.projectId === PROD_PROJECT_ID ? "sip-prod" : "sip-staging";
   try {
     cachedApp = getApp(appName);
+    return cachedApp;
   } catch {
+    // Reuse legacy [DEFAULT] app when project matches (existing auth sessions).
+    try {
+      const legacy = getApp();
+      if (legacy.options.projectId === config.projectId) {
+        cachedApp = legacy;
+        return cachedApp;
+      }
+    } catch {
+      /* no default app */
+    }
     cachedApp = initializeApp(config, appName);
+    return cachedApp;
   }
-  return cachedApp;
 }
 
 export function firebaseAuth(): Auth {

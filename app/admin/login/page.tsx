@@ -9,7 +9,7 @@ import {
   signOut,
   sendEmailVerification,
 } from "firebase/auth";
-import { ensureAuthPersistence, firebaseAuth } from "../../../lib/firebase-client";
+import { ensureAuthPersistence, firebaseAuth, prodFirebaseEnvDiagnostics } from "../../../lib/firebase-client";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -20,6 +20,7 @@ export default function AdminLoginPage() {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [verifyBusy, setVerifyBusy] = useState(false);
   const [verifyMsg, setVerifyMsg] = useState<string | null>(null);
+  const firebaseDiag = prodFirebaseEnvDiagnostics();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(firebaseAuth(), async (u) => {
@@ -132,6 +133,15 @@ export default function AdminLoginPage() {
             <code className="text-[11px] bg-ink/5 px-1 rounded">super_admins</code>.
           </p>
         </div>
+
+        {firebaseDiag.useProd && !firebaseDiag.complete && (
+          <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 leading-relaxed">
+            Production Firebase config is not in this build yet (baked PROD project:{" "}
+            {firebaseDiag.bakedProdProjectId}). You can still sign in, but admin callables will
+            fail until you redeploy Production on Vercel with{" "}
+            <code className="bg-amber-100 px-1 rounded">NEXT_PUBLIC_FIREBASE_PROD_*</code> vars.
+          </p>
+        )}
 
         {pendingVerification ? (
           <div className="space-y-3 text-sm">
@@ -247,6 +257,9 @@ function friendlyAuthError(err: unknown): string {
   }
   if (code === "auth/api-key-not-valid") {
     return "Firebase web config is wrong — check NEXT_PUBLIC_FIREBASE_* env vars in Vercel.";
+  }
+  if (err instanceof Error && err.message.includes("Firebase config incomplete")) {
+    return err.message;
   }
   if (code === "auth/network-request-failed") {
     return "Network error — check your connection.";
