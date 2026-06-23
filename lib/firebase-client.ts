@@ -66,13 +66,28 @@ function isComplete(c: FirebaseWebConfig): boolean {
   return Boolean(c.apiKey && c.authDomain && c.projectId && c.appId);
 }
 
+const PROD_PROJECT_ID = "sip-prod-29422";
+
+function isProdProjectConfig(c: FirebaseWebConfig): boolean {
+  return isComplete(c) && c.projectId === PROD_PROJECT_ID;
+}
+
 const PROD_HOSTS = new Set(["www.sipapp.co", "sipapp.co"]);
 
+function isAdminPath(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.location.pathname.startsWith("/admin");
+}
+
+/** Prod Firebase for www.sipapp.co, production deploys, and /admin when PROD vars are baked. */
 function shouldUseProdFirebase(): boolean {
   if (typeof window !== "undefined" && PROD_HOSTS.has(window.location.hostname)) {
     return true;
   }
-  return process.env.VERCEL_ENV === "production";
+  if (process.env.VERCEL_ENV === "production") return true;
+  // Preview deploys (e.g. *.vercel.app) still bundle PROD_* vars — use them on admin routes.
+  if (isAdminPath() && isProdProjectConfig(readProdConfig())) return true;
+  return false;
 }
 
 function missingProdKeys(c: FirebaseWebConfig): string[] {
@@ -82,12 +97,6 @@ function missingProdKeys(c: FirebaseWebConfig): string[] {
   if (!c.projectId) out.push("NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID");
   if (!c.appId) out.push("NEXT_PUBLIC_FIREBASE_PROD_APP_ID");
   return out;
-}
-
-const PROD_PROJECT_ID = "sip-prod-29422";
-
-function isProdProjectConfig(c: FirebaseWebConfig): boolean {
-  return isComplete(c) && c.projectId === PROD_PROJECT_ID;
 }
 
 function resolveFirebaseConfig(): FirebaseWebConfig {
@@ -116,10 +125,18 @@ function resolveFirebaseConfig(): FirebaseWebConfig {
 }
 
 let resolvedConfig: FirebaseWebConfig | null = null;
+let cachedApp: FirebaseApp | null = null;
+let cachedFunctions: Functions | null = null;
+let authPersistencePromise: Promise<void> | null = null;
 
 function getConfig(): FirebaseWebConfig {
   if (typeof window !== "undefined") {
-    if (!resolvedConfig) resolvedConfig = resolveFirebaseConfig();
+    const next = resolveFirebaseConfig();
+    if (!resolvedConfig || resolvedConfig.projectId !== next.projectId) {
+      resolvedConfig = next;
+      cachedApp = null;
+      cachedFunctions = null;
+    }
     return resolvedConfig;
   }
   // SSR: only VERCEL_ENV applies (no hostname).
@@ -163,10 +180,6 @@ export function prodFirebaseEnvDiagnostics(): {
   };
 }
 
-let cachedApp: FirebaseApp | null = null;
-let cachedFunctions: Functions | null = null;
-let authPersistencePromise: Promise<void> | null = null;
-
 function ensureBrowser() {
   if (typeof window === "undefined") {
     throw new Error("This Firebase helper runs only in the browser.");
@@ -174,8 +187,12 @@ function ensureBrowser() {
 }
 
 function ensureApp(): FirebaseApp {
-  if (cachedApp) return cachedApp;
   const config = getConfig();
+  if (cachedApp && cachedApp.options.projectId === config.projectId) {
+    return cachedApp;
+  }
+  cachedApp = null;
+  cachedFunctions = null;
   if (!isComplete(config)) {
     const missing = shouldUseProdFirebase()
       ? missingProdKeys(readProdConfig())
@@ -192,11 +209,11 @@ function ensureApp(): FirebaseApp {
   }
   if (shouldUseProdFirebase() && config.projectId !== PROD_PROJECT_ID) {
     console.warn(
-      "[firebase] Production host is using",
-      config.projectId,
-      "— super-admin callables need",
+      "[firebase] Expected",
       PROD_PROJECT_ID,
-      "after a Production redeploy with NEXT_PUBLIC_FIREBASE_PROD_* vars."
+      "but using",
+      config.projectId,
+      "— check NEXT_PUBLIC_FIREBASE_PROD_* vars and redeploy."
     );
   }
   const appName = config.projectId === PROD_PROJECT_ID ? "sip-prod" : "sip-staging";
@@ -302,7 +319,7 @@ export type DmcaLogRow = {
 function callableErrorMessage(err: unknown, fnName?: string): string {
   console.error("[callable error]", fnName ?? "", err);
   const pid = activeFirebaseProjectId();
-  if (pid && pid !== PROD_PROJECT_ID && shouldUseProdFirebase()) {
+  if (shouldUseProdFirebase() && pid && pid !== PROD_PROJECT_ID) {
     return (
       `Wrong Firebase project (${pid}). Production admin must use ${PROD_PROJECT_ID}. ` +
       "Check NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID is sip-prod-29422 (not staging), " +
