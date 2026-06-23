@@ -65,6 +65,7 @@ export default function AdminShell({ children }: AdminShellProps) {
   const navItems = useMemo(
     () => [
       { href: "/admin", label: "Dashboard" },
+      { href: "/admin/analytics", label: "Analytics" },
       { href: "/admin/bars", label: "Bars" },
       { href: "/admin/bar-admins", label: "Bar admins" },
       { href: "/admin/access", label: "Early access" },

@@ -313,3 +313,108 @@ export async function setBarAdminStatusAdmin(
     throw new Error(callableErrorMessage(e));
   }
 }
+
+// ——— Founder analytics (platform-wide) ———
+
+export interface PromoFunnel {
+  impressions: number;
+  views: number;
+  clicks: number;
+  saves: number;
+  shares: number;
+  qrShown: number;
+  redemptions: number;
+}
+export interface WindowTotals {
+  activeUsers: number;
+  newUsers: number;
+  totalEvents: number;
+  sessions: number;
+  avgSessionSeconds: number;
+  promo: PromoFunnel;
+  events: { impressions: number; clicks: number; rsvps: number };
+  bars: {
+    views: number;
+    imHere: number;
+    lineReports: number;
+    crowdReports: number;
+    photos: number;
+    searches: number;
+    mapOpens: number;
+    directions: number;
+    saves: number;
+    shares: number;
+  };
+  social: {
+    friendsAdded: number;
+    groupsCreated: number;
+    groupsJoined: number;
+    invitesSent: number;
+    invitesAccepted: number;
+  };
+}
+export interface PlatformAnalytics {
+  generatedAt: number;
+  meta: {
+    computedAt?: { seconds: number } | number | null;
+    dau?: number;
+    wau?: number;
+    mau?: number;
+    stickiness?: number;
+    lifetime?: {
+      totalUsers?: number;
+      totalEvents?: number;
+      totalRedemptions?: number;
+      totalPromoViews?: number;
+    };
+    trackingHealth?: {
+      last24hEvents?: number;
+      missingUserId?: number;
+      latestEventAt?: { seconds: number } | null;
+      eventTypeLastSeen?: Record<string, number>;
+      eventTypeCount?: Record<string, number>;
+    };
+  };
+  windows: {
+    today: WindowTotals;
+    last7: WindowTotals;
+    last30: WindowTotals;
+    allTime: WindowTotals;
+  };
+  series: {
+    dayKey: string;
+    activeUsers: number;
+    newUsers: number;
+    promoViews: number;
+    redemptions: number;
+    sessions: number;
+    totalEvents: number;
+  }[];
+  segments: { counts: Record<string, number>; insufficient: number; total: number };
+  venues: {
+    barId: string;
+    name: string;
+    views: number;
+    imHere: number;
+    redemptions: number;
+    lineReports: number;
+  }[];
+  byCity: Record<string, { barEvents: number; redemptions: number }>;
+  byBarType: Record<string, { barEvents: number; promoViews: number; redemptions: number }>;
+  heatmap: { hourly: Record<string, number>; dayOfWeek: Record<string, number> };
+}
+
+export async function getPlatformAnalytics(
+  refresh = false
+): Promise<PlatformAnalytics> {
+  const fn = httpsCallable<{ refresh: boolean }, PlatformAnalytics>(
+    firebaseFunctions(),
+    "superAdminGetAnalytics"
+  );
+  try {
+    const res = await fn({ refresh });
+    return res.data;
+  } catch (e) {
+    throw new Error(callableErrorMessage(e));
+  }
+}
