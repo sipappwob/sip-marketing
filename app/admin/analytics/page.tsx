@@ -16,6 +16,7 @@ import {
 import {
   getPlatformAnalytics,
   pingSuperAdmin,
+  prodFirebaseEnvDiagnostics,
   type PlatformAnalytics,
   type WindowTotals,
 } from "../../../lib/firebase-client";
@@ -79,13 +80,18 @@ export default function AnalyticsPage() {
 
   async function runDiag() {
     setDiag(null);
+    const d = prodFirebaseEnvDiagnostics();
+    const envLine =
+      `host ${d.hostname} · active ${d.activeProjectId} · baked PROD ${d.bakedProdProjectId} · ` +
+      `baked default ${d.bakedDefaultProjectId}`;
     try {
       const p = await pingSuperAdmin();
       setDiag(
-        `Callable OK · Firebase project ${p.projectId ?? "?"} · uid ${p.uid.slice(0, 8)}…`
+        `Callable OK · cloud ${p.projectId ?? "?"} · uid ${p.uid.slice(0, 8)}… · ${envLine}`
       );
     } catch (e) {
-      setDiag(e instanceof Error ? e.message : "Ping failed.");
+      const msg = e instanceof Error ? e.message : "Ping failed.";
+      setDiag(`${msg} · ${envLine}`);
     }
   }
 

@@ -189,23 +189,36 @@ export default function AdminShell({ children }: AdminShellProps) {
         {firebaseDiag.useProd && !isProdFirebaseProject() && (
           <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs px-6 py-2 space-y-1">
             <p>
-              Wrong Firebase project for production admin ({activeFirebaseProjectId() || "unknown"}).
-              Expected <code className="bg-amber-100 px-1 rounded">sip-prod-29422</code>.
+              Wrong Firebase project (<strong>{firebaseDiag.activeProjectId}</strong>). Expected{" "}
+              <code className="bg-amber-100 px-1 rounded">sip-prod-29422</code>.
+            </p>
+            <p className="font-mono text-[10px] text-amber-800/80">
+              host={firebaseDiag.hostname} · baked PROD projectId={firebaseDiag.bakedProdProjectId}{" "}
+              · baked default projectId={firebaseDiag.bakedDefaultProjectId}
             </p>
             {firebaseDiag.missing.length > 0 && (
               <p>
-                Missing in this build:{" "}
+                Empty in this build:{" "}
                 <code className="bg-amber-100 px-1 rounded">
                   {firebaseDiag.missing.join(", ")}
                 </code>
-                . Add on Vercel → Production, then <strong>Redeploy</strong> (vars are baked in at
-                build time).
+                — add on Vercel (Production scope), then <strong>Redeploy Production</strong>.
               </p>
             )}
-            {!firebaseDiag.missing.length && (
+            {firebaseDiag.missing.length === 0 &&
+              firebaseDiag.bakedProdProjectId === "sip-staging-70488" && (
               <p>
-                PROD vars look set but this deploy may predate them — trigger a fresh Production
-                redeploy, then sign out and sign in again.
+                <code className="bg-amber-100 px-1 rounded">
+                  NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID
+                </code>{" "}
+                is set to staging — change it to <strong>sip-prod-29422</strong> and redeploy.
+              </p>
+            )}
+            {firebaseDiag.missing.length === 0 &&
+              firebaseDiag.bakedProdProjectId !== "sip-staging-70488" && (
+              <p>
+                Vars may be set in Vercel but this deploy was built before they existed —{" "}
+                <strong>Redeploy Production</strong>, then sign out and sign in.
               </p>
             )}
           </div>

@@ -19,7 +19,7 @@
  */
 "use client";
 
-import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
+import { initializeApp, getApp, type FirebaseApp } from "firebase/app";
 import {
   getAuth,
   type Auth,
@@ -84,24 +84,34 @@ function missingProdKeys(c: FirebaseWebConfig): string[] {
   return out;
 }
 
+const PROD_PROJECT_ID = "sip-prod-29422";
+
+function isProdProjectConfig(c: FirebaseWebConfig): boolean {
+  return isComplete(c) && c.projectId === PROD_PROJECT_ID;
+}
+
 function resolveFirebaseConfig(): FirebaseWebConfig {
   const prod = readProdConfig();
   const staging = readDefaultConfig();
   const useProd = shouldUseProdFirebase();
 
   if (useProd) {
-    if (!isComplete(prod)) {
-      console.error(
-        "[firebase] PROD config incomplete — missing:",
-        missingProdKeys(prod).join(", ")
-      );
-      return prod;
-    }
-    return prod;
+    if (isProdProjectConfig(prod)) return prod;
+    // Some Vercel Production envs set prod values on the standard (non-_PROD_) keys.
+    if (isProdProjectConfig(staging)) return staging;
+    console.error(
+      "[firebase] Expected sip-prod-29422 on production host. PROD keys missing/wrong:",
+      missingProdKeys(prod).join(", ") || "none empty",
+      "— baked PROD projectId:",
+      prod.projectId || "(empty)",
+      "— baked default projectId:",
+      staging.projectId || "(empty)"
+    );
+    return isComplete(prod) ? prod : staging;
   }
 
   if (isComplete(staging)) return staging;
-  if (isComplete(prod)) return prod;
+  if (isProdProjectConfig(prod)) return prod;
   return staging;
 }
 
@@ -126,7 +136,7 @@ export function activeFirebaseProjectId(): string {
 }
 
 export function isProdFirebaseProject(): boolean {
-  return getConfig().projectId === "sip-prod-29422";
+  return getConfig().projectId === PROD_PROJECT_ID;
 }
 
 /** For admin UI — which PROD env vars are empty in this build. */
@@ -134,14 +144,22 @@ export function prodFirebaseEnvDiagnostics(): {
   useProd: boolean;
   complete: boolean;
   missing: string[];
-  projectId: string;
+  bakedProdProjectId: string;
+  bakedDefaultProjectId: string;
+  activeProjectId: string;
+  hostname: string;
 } {
   const prod = readProdConfig();
+  const staging = readDefaultConfig();
   return {
     useProd: shouldUseProdFirebase(),
-    complete: isComplete(prod),
+    complete: isProdProjectConfig(prod) || isProdProjectConfig(staging),
     missing: missingProdKeys(prod),
-    projectId: prod.projectId,
+    bakedProdProjectId: prod.projectId || "(empty in build)",
+    bakedDefaultProjectId: staging.projectId || "(empty in build)",
+    activeProjectId: getConfig().projectId || "(none)",
+    hostname:
+      typeof window !== "undefined" ? window.location.hostname : "(ssr)",
   };
 }
 
@@ -160,14 +178,31 @@ function ensureApp(): FirebaseApp {
   const config = getConfig();
   if (!isComplete(config)) {
     const missing = shouldUseProdFirebase()
-        ? missingProdKeys(config)
-        : ["NEXT_PUBLIC_FIREBASE_API_KEY", "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", "NEXT_PUBLIC_FIREBASE_PROJECT_ID", "NEXT_PUBLIC_FIREBASE_APP_ID"];
+      ? missingProdKeys(readProdConfig())
+      : [
+          "NEXT_PUBLIC_FIREBASE_API_KEY",
+          "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+          "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+          "NEXT_PUBLIC_FIREBASE_APP_ID",
+        ];
     throw new Error(
       `Firebase config incomplete (missing: ${missing.join(", ")}). ` +
         "Set vars on Vercel for Production, then redeploy — env vars are baked in at build time."
     );
   }
-  cachedApp = getApps().length ? getApp() : initializeApp(config);
+  if (shouldUseProdFirebase() && config.projectId !== PROD_PROJECT_ID) {
+    throw new Error(
+      `Production admin is using Firebase project "${config.projectId}" but must use ` +
+        `${PROD_PROJECT_ID}. Check NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID on Vercel ` +
+        "(not sip-staging-70488), redeploy Production, sign out, and sign in again."
+    );
+  }
+  const appName = config.projectId === PROD_PROJECT_ID ? "sip-prod" : "sip-staging";
+  try {
+    cachedApp = getApp(appName);
+  } catch {
+    cachedApp = initializeApp(config, appName);
+  }
   return cachedApp;
 }
 
@@ -254,10 +289,11 @@ export type DmcaLogRow = {
 function callableErrorMessage(err: unknown, fnName?: string): string {
   console.error("[callable error]", fnName ?? "", err);
   const pid = activeFirebaseProjectId();
-  if (pid && pid !== "sip-prod-29422" && process.env.VERCEL_ENV === "production") {
+  if (pid && pid !== PROD_PROJECT_ID && shouldUseProdFirebase()) {
     return (
-      `Wrong Firebase project (${pid}). Production admin must use sip-prod-29422. ` +
-      "Set NEXT_PUBLIC_FIREBASE_PROD_* on Vercel, redeploy, sign out, and sign in again."
+      `Wrong Firebase project (${pid}). Production admin must use ${PROD_PROJECT_ID}. ` +
+      "Check NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID is sip-prod-29422 (not staging), " +
+      "redeploy Production on Vercel, sign out, and sign in again."
     );
   }
   if (err instanceof FunctionsError) {
