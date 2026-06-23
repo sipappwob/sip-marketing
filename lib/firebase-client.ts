@@ -67,17 +67,33 @@ function isComplete(c: FirebaseWebConfig): boolean {
 }
 
 function resolveFirebaseConfig(): FirebaseWebConfig {
+  const prod = readProdConfig();
+  const staging = readDefaultConfig();
   const onProd = process.env.VERCEL_ENV === "production";
 
   if (onProd) {
-    const prod = readProdConfig();
-    if (isComplete(prod)) return prod;
+    if (!isComplete(prod)) {
+      console.error(
+        "[firebase] Production deploy is missing NEXT_PUBLIC_FIREBASE_PROD_* vars. " +
+          "Super-admin callables exist only on sip-prod-29422."
+      );
+      return prod;
+    }
+    return prod;
   }
 
-  const staging = readDefaultConfig();
   if (isComplete(staging)) return staging;
+  if (isComplete(prod)) return prod;
+  return staging;
+}
 
-  return onProd ? readProdConfig() : staging;
+/** Active Firebase project baked into this build (check Vercel env if wrong). */
+export function activeFirebaseProjectId(): string {
+  return config.projectId;
+}
+
+export function isProdFirebaseProject(): boolean {
+  return config.projectId === "sip-prod-29422";
 }
 
 const config = resolveFirebaseConfig();
@@ -101,7 +117,12 @@ function ensureApp(): FirebaseApp {
     !config.appId
   ) {
     throw new Error(
-      "Firebase web config incomplete — on production set NEXT_PUBLIC_FIREBASE_PROD_*; otherwise set NEXT_PUBLIC_FIREBASE_* (staging)."
+      process.env.VERCEL_ENV === "production"
+        ? "Firebase PROD config incomplete — set NEXT_PUBLIC_FIREBASE_PROD_API_KEY, " +
+          "NEXT_PUBLIC_FIREBASE_PROD_AUTH_DOMAIN, NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID " +
+          "(sip-prod-29422), and NEXT_PUBLIC_FIREBASE_PROD_APP_ID on Vercel, then redeploy."
+        : "Firebase web config incomplete — set NEXT_PUBLIC_FIREBASE_* (staging) or " +
+          "NEXT_PUBLIC_FIREBASE_PROD_* (production)."
     );
   }
   cachedApp = getApps().length ? getApp() : initializeApp(config);
@@ -188,8 +209,15 @@ export type DmcaLogRow = {
   createdAt: number | null;
 };
 
-function callableErrorMessage(err: unknown): string {
-  console.error("[callable error]", err);
+function callableErrorMessage(err: unknown, fnName?: string): string {
+  console.error("[callable error]", fnName ?? "", err);
+  const pid = activeFirebaseProjectId();
+  if (pid && pid !== "sip-prod-29422" && process.env.VERCEL_ENV === "production") {
+    return (
+      `Wrong Firebase project (${pid}). Production admin must use sip-prod-29422. ` +
+      "Set NEXT_PUBLIC_FIREBASE_PROD_* on Vercel, redeploy, sign out, and sign in again."
+    );
+  }
   if (err instanceof FunctionsError) {
     const code = err.code.replace(/^functions\//, "");
     const details =
@@ -204,11 +232,10 @@ function callableErrorMessage(err: unknown): string {
     }
     if (code === "internal") {
       return (
-        "Cloud Function failed (internal). This usually means the function " +
-        "crashed, timed out, or its response was not JSON-safe. Redeploy the " +
-        "latest functions from Sip main, hard-refresh, and click " +
-        "\"Test callable connection\". Check Firebase console → Functions → " +
-        "Logs for superAdminGetAnalytics."
+        `Cloud Function failed (internal)${fnName ? ` [${fnName}]` : ""}. ` +
+        `Firebase project: ${pid || "?"}. ` +
+        "If project is not sip-prod-29422, fix Vercel PROD env vars. " +
+        "Otherwise check Firebase console → Functions → Logs."
       );
     }
     if (code === "deadline-exceeded") {
@@ -351,7 +378,7 @@ export async function listBarAdminsAdmin(): Promise<{
       validations: res.data.validations ?? [],
     };
   } catch (e) {
-    throw new Error(callableErrorMessage(e));
+    throw new Error(callableErrorMessage(e, "superAdminListBarAdmins"));
   }
 }
 
@@ -367,7 +394,7 @@ export async function setBarAdminStatusAdmin(
   try {
     await fn({ adminUid, status });
   } catch (e) {
-    throw new Error(callableErrorMessage(e));
+    throw new Error(callableErrorMessage(e, "superAdminSetBarAdminStatus"));
   }
 }
 
@@ -472,8 +499,12 @@ export async function pingSuperAdmin(): Promise<{
     Record<string, never>,
     { ok: true; uid: string; projectId: string | null; at: number }
   >("superAdminPing");
-  const res = await fn({});
-  return res.data;
+  try {
+    const res = await fn({});
+    return res.data;
+  } catch (e) {
+    throw new Error(callableErrorMessage(e, "superAdminPing"));
+  }
 }
 
 export async function getPlatformAnalytics(
@@ -487,6 +518,6 @@ export async function getPlatformAnalytics(
     const res = await fn({ refresh });
     return res.data;
   } catch (e) {
-    throw new Error(callableErrorMessage(e));
+    throw new Error(callableErrorMessage(e, "superAdminGetAnalytics"));
   }
 }

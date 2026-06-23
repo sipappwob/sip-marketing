@@ -10,7 +10,7 @@ import {
   type User,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { firebaseAuth, firestore } from "../../lib/firebase-client";
+import { firebaseAuth, firestore, activeFirebaseProjectId, isProdFirebaseProject } from "../../lib/firebase-client";
 
 interface AdminShellProps {
   children: React.ReactNode;
@@ -179,6 +179,14 @@ export default function AdminShell({ children }: AdminShellProps) {
   return (
     <div className="min-h-screen bg-ivory">
       <header className="border-b border-ink/10 bg-ivory">
+        {process.env.VERCEL_ENV === "production" && !isProdFirebaseProject() && (
+          <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs px-6 py-2">
+            Wrong Firebase project for production admin ({activeFirebaseProjectId() || "unknown"}).
+            Set <code className="bg-amber-100 px-1 rounded">NEXT_PUBLIC_FIREBASE_PROD_*</code> on Vercel
+            to <code className="bg-amber-100 px-1 rounded">sip-prod-29422</code>, redeploy, then sign out
+            and sign in again.
+          </div>
+        )}
         <div className="max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center gap-6">
           <Link href="/admin" className="font-semibold text-lg">
             Sip Super Admin
@@ -202,6 +210,9 @@ export default function AdminShell({ children }: AdminShellProps) {
             })}
           </nav>
           <div className="flex items-center gap-3">
+            <span className="text-[10px] text-ink/40 font-mono hidden sm:inline">
+              {activeFirebaseProjectId()}
+            </span>
             <span className="text-xs text-ink/60">{user?.email ?? user?.uid}</span>
             <button
               onClick={() => signOut(firebaseAuth())}
