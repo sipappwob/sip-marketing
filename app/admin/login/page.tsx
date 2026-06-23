@@ -9,7 +9,7 @@ import {
   signOut,
   sendEmailVerification,
 } from "firebase/auth";
-import { ensureAuthPersistence, firebaseAuth, prodFirebaseEnvDiagnostics } from "../../../lib/firebase-client";
+import { ensureAuthPersistence, firebaseAuth, activeFirebaseProjectId, prodFirebaseEnvDiagnostics } from "../../../lib/firebase-client";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -134,6 +134,12 @@ export default function AdminLoginPage() {
           </p>
         </div>
 
+        {firebaseDiag.useProd && (
+          <p className="text-xs text-ink/50 font-mono">
+            Firebase: {activeFirebaseProjectId() || "?"}
+          </p>
+        )}
+
         {firebaseDiag.useProd && !firebaseDiag.complete && (
           <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 leading-relaxed">
             Production Firebase config is not in this build yet (baked PROD project:{" "}
@@ -248,10 +254,20 @@ export default function AdminLoginPage() {
 
 function friendlyAuthError(err: unknown): string {
   const code = (err as { code?: string })?.code ?? "auth/unknown";
+  const projectId = activeFirebaseProjectId();
   if (code === "auth/invalid-credential" || code === "auth/wrong-password") {
-    return "Wrong email or password.";
+    return (
+      `Wrong email or password for Firebase project ${projectId || "?"}. ` +
+      "Super admin now uses sip-prod-29422 — your staging password may not apply. " +
+      "Use Forgot password after we fix the reset flow, or ask Will/Sam to reset you in Firebase Console → Authentication."
+    );
   }
-  if (code === "auth/user-not-found") return "No account with that email.";
+  if (code === "auth/user-not-found") {
+    return (
+      `No Firebase account for this email in ${projectId || "?"}. ` +
+      "Create the user in Firebase Console → Authentication (sip-prod-29422), then add their uid to super_admins."
+    );
+  }
   if (code === "auth/operation-not-allowed") {
     return "Email/password sign-in is disabled in this Firebase project. Enable it in Authentication → Sign-in method.";
   }

@@ -268,9 +268,13 @@ export async function assertSuperAdminForPasswordReset(
     firebaseFunctions(),
     "assertSuperAdminForPasswordReset"
   );
-  const res = await fn({ email: email.trim().toLowerCase() });
-  if (!res.data?.ok) {
-    throw new Error("Could not verify super admin account.");
+  try {
+    const res = await fn({ email: email.trim().toLowerCase() });
+    if (!res.data?.ok) {
+      throw new Error("Could not verify super admin account.");
+    }
+  } catch (e) {
+    throw new Error(callableErrorMessage(e, "assertSuperAdminForPasswordReset"));
   }
 }
 
