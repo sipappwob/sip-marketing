@@ -121,6 +121,17 @@ export function firebaseFunctions(): Functions {
   return cachedFunctions;
 }
 
+/** Analytics + bar-admin callables can cold-start slowly; default client timeout is 70s. */
+const SUPER_ADMIN_CALLABLE_TIMEOUT_MS = 180_000;
+
+function superAdminCallable<RequestData, ResponseData>(name: string) {
+  return httpsCallable<RequestData, ResponseData>(
+    firebaseFunctions(),
+    name,
+    { timeout: SUPER_ADMIN_CALLABLE_TIMEOUT_MS }
+  );
+}
+
 /** Server verifies Email/Password user + super_admins/{uid} before password reset. */
 export async function assertSuperAdminForPasswordReset(
   email: string
@@ -194,9 +205,16 @@ function callableErrorMessage(err: unknown): string {
     if (code === "internal") {
       return (
         "Cloud Function failed (internal). This usually means the function " +
-        "crashed or its response was not JSON-safe. Redeploy the latest " +
-        "functions from Sip main, then hard-refresh. Check Firebase " +
-        "console → Functions → Logs for superAdminGetAnalytics."
+        "crashed, timed out, or its response was not JSON-safe. Redeploy the " +
+        "latest functions from Sip main, hard-refresh, and click " +
+        "\"Test callable connection\". Check Firebase console → Functions → " +
+        "Logs for superAdminGetAnalytics."
+      );
+    }
+    if (code === "deadline-exceeded") {
+      return (
+        "Request timed out — analytics can take up to 3 minutes on first load. " +
+        "Try again; if it keeps failing, check Firebase function logs."
       );
     }
     if (code === "unauthenticated") {
@@ -322,10 +340,10 @@ export async function listBarAdminsAdmin(): Promise<{
   validations: BarAdminValidationRow[];
 }> {
   await ensureCallableAuth();
-  const fn = httpsCallable<
+  const fn = superAdminCallable<
     Record<string, never>,
     { admins: BarAdminRow[]; validations: BarAdminValidationRow[] }
-  >(firebaseFunctions(), "superAdminListBarAdmins");
+  >("superAdminListBarAdmins");
   try {
     const res = await fn({});
     return {
@@ -342,10 +360,10 @@ export async function setBarAdminStatusAdmin(
   status: "active" | "rejected"
 ): Promise<void> {
   await ensureCallableAuth();
-  const fn = httpsCallable<
+  const fn = superAdminCallable<
     { adminUid: string; status: "active" | "rejected" },
     { ok: true }
-  >(firebaseFunctions(), "superAdminSetBarAdminStatus");
+  >("superAdminSetBarAdminStatus");
   try {
     await fn({ adminUid, status });
   } catch (e) {
@@ -450,10 +468,10 @@ export async function pingSuperAdmin(): Promise<{
   at: number;
 }> {
   await ensureCallableAuth();
-  const fn = httpsCallable<
+  const fn = superAdminCallable<
     Record<string, never>,
     { ok: true; uid: string; projectId: string | null; at: number }
-  >(firebaseFunctions(), "superAdminPing");
+  >("superAdminPing");
   const res = await fn({});
   return res.data;
 }
@@ -462,8 +480,7 @@ export async function getPlatformAnalytics(
   refresh = false
 ): Promise<PlatformAnalytics> {
   await ensureCallableAuth();
-  const fn = httpsCallable<{ refresh: boolean }, PlatformAnalytics>(
-    firebaseFunctions(),
+  const fn = superAdminCallable<{ refresh: boolean }, PlatformAnalytics>(
     "superAdminGetAnalytics"
   );
   try {

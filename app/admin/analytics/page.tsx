@@ -82,7 +82,7 @@ export default function AnalyticsPage() {
     try {
       const p = await pingSuperAdmin();
       setDiag(
-        `Callable OK · project ${p.projectId ?? "?"} · uid ${p.uid.slice(0, 8)}…`
+        `Callable OK · Firebase project ${p.projectId ?? "?"} · uid ${p.uid.slice(0, 8)}…`
       );
     } catch (e) {
       setDiag(e instanceof Error ? e.message : "Ping failed.");
@@ -172,7 +172,9 @@ export default function AnalyticsPage() {
       )}
 
       {loading ? (
-        <p className="text-sm text-ink/60">Loading analytics…</p>
+        <p className="text-sm text-ink/60">
+          Loading analytics… First load after deploy can take up to a minute.
+        </p>
       ) : !error && data && w ? (
         <>
           <ExecutiveOverview data={data} w={w} winLabel={WINDOW_LABELS[win]} />
