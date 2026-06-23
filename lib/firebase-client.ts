@@ -66,16 +66,34 @@ function isComplete(c: FirebaseWebConfig): boolean {
   return Boolean(c.apiKey && c.authDomain && c.projectId && c.appId);
 }
 
+const PROD_HOSTS = new Set(["www.sipapp.co", "sipapp.co"]);
+
+function shouldUseProdFirebase(): boolean {
+  if (typeof window !== "undefined" && PROD_HOSTS.has(window.location.hostname)) {
+    return true;
+  }
+  return process.env.VERCEL_ENV === "production";
+}
+
+function missingProdKeys(c: FirebaseWebConfig): string[] {
+  const out: string[] = [];
+  if (!c.apiKey) out.push("NEXT_PUBLIC_FIREBASE_PROD_API_KEY");
+  if (!c.authDomain) out.push("NEXT_PUBLIC_FIREBASE_PROD_AUTH_DOMAIN");
+  if (!c.projectId) out.push("NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID");
+  if (!c.appId) out.push("NEXT_PUBLIC_FIREBASE_PROD_APP_ID");
+  return out;
+}
+
 function resolveFirebaseConfig(): FirebaseWebConfig {
   const prod = readProdConfig();
   const staging = readDefaultConfig();
-  const onProd = process.env.VERCEL_ENV === "production";
+  const useProd = shouldUseProdFirebase();
 
-  if (onProd) {
+  if (useProd) {
     if (!isComplete(prod)) {
       console.error(
-        "[firebase] Production deploy is missing NEXT_PUBLIC_FIREBASE_PROD_* vars. " +
-          "Super-admin callables exist only on sip-prod-29422."
+        "[firebase] PROD config incomplete — missing:",
+        missingProdKeys(prod).join(", ")
       );
       return prod;
     }
@@ -87,16 +105,45 @@ function resolveFirebaseConfig(): FirebaseWebConfig {
   return staging;
 }
 
-/** Active Firebase project baked into this build (check Vercel env if wrong). */
+let resolvedConfig: FirebaseWebConfig | null = null;
+
+function getConfig(): FirebaseWebConfig {
+  if (typeof window !== "undefined") {
+    if (!resolvedConfig) resolvedConfig = resolveFirebaseConfig();
+    return resolvedConfig;
+  }
+  // SSR: only VERCEL_ENV applies (no hostname).
+  const prod = readProdConfig();
+  if (process.env.VERCEL_ENV === "production" && isComplete(prod)) return prod;
+  const staging = readDefaultConfig();
+  if (isComplete(staging)) return staging;
+  return isComplete(prod) ? prod : staging;
+}
+
+/** Active Firebase project (resolved on first client use). */
 export function activeFirebaseProjectId(): string {
-  return config.projectId;
+  return getConfig().projectId;
 }
 
 export function isProdFirebaseProject(): boolean {
-  return config.projectId === "sip-prod-29422";
+  return getConfig().projectId === "sip-prod-29422";
 }
 
-const config = resolveFirebaseConfig();
+/** For admin UI — which PROD env vars are empty in this build. */
+export function prodFirebaseEnvDiagnostics(): {
+  useProd: boolean;
+  complete: boolean;
+  missing: string[];
+  projectId: string;
+} {
+  const prod = readProdConfig();
+  return {
+    useProd: shouldUseProdFirebase(),
+    complete: isComplete(prod),
+    missing: missingProdKeys(prod),
+    projectId: prod.projectId,
+  };
+}
 
 let cachedApp: FirebaseApp | null = null;
 let cachedFunctions: Functions | null = null;
@@ -110,19 +157,14 @@ function ensureBrowser() {
 
 function ensureApp(): FirebaseApp {
   if (cachedApp) return cachedApp;
-  if (
-    !config.apiKey ||
-    !config.authDomain ||
-    !config.projectId ||
-    !config.appId
-  ) {
+  const config = getConfig();
+  if (!isComplete(config)) {
+    const missing = shouldUseProdFirebase()
+        ? missingProdKeys(config)
+        : ["NEXT_PUBLIC_FIREBASE_API_KEY", "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", "NEXT_PUBLIC_FIREBASE_PROJECT_ID", "NEXT_PUBLIC_FIREBASE_APP_ID"];
     throw new Error(
-      process.env.VERCEL_ENV === "production"
-        ? "Firebase PROD config incomplete — set NEXT_PUBLIC_FIREBASE_PROD_API_KEY, " +
-          "NEXT_PUBLIC_FIREBASE_PROD_AUTH_DOMAIN, NEXT_PUBLIC_FIREBASE_PROD_PROJECT_ID " +
-          "(sip-prod-29422), and NEXT_PUBLIC_FIREBASE_PROD_APP_ID on Vercel, then redeploy."
-        : "Firebase web config incomplete — set NEXT_PUBLIC_FIREBASE_* (staging) or " +
-          "NEXT_PUBLIC_FIREBASE_PROD_* (production)."
+      `Firebase config incomplete (missing: ${missing.join(", ")}). ` +
+        "Set vars on Vercel for Production, then redeploy — env vars are baked in at build time."
     );
   }
   cachedApp = getApps().length ? getApp() : initializeApp(config);

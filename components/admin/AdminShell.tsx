@@ -10,7 +10,13 @@ import {
   type User,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { firebaseAuth, firestore, activeFirebaseProjectId, isProdFirebaseProject } from "../../lib/firebase-client";
+import {
+  firebaseAuth,
+  firestore,
+  activeFirebaseProjectId,
+  isProdFirebaseProject,
+  prodFirebaseEnvDiagnostics,
+} from "../../lib/firebase-client";
 
 interface AdminShellProps {
   children: React.ReactNode;
@@ -30,6 +36,7 @@ export default function AdminShell({ children }: AdminShellProps) {
   const [user, setUser] = useState<User | null>(null);
   const [verifyBusy, setVerifyBusy] = useState(false);
   const [verifyMsg, setVerifyMsg] = useState<string | null>(null);
+  const firebaseDiag = useMemo(() => prodFirebaseEnvDiagnostics(), []);
 
   const isLoginRoute = pathname === "/admin/login";
   const isResetRoute = pathname === "/admin/reset-password";
@@ -179,12 +186,28 @@ export default function AdminShell({ children }: AdminShellProps) {
   return (
     <div className="min-h-screen bg-ivory">
       <header className="border-b border-ink/10 bg-ivory">
-        {process.env.VERCEL_ENV === "production" && !isProdFirebaseProject() && (
-          <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs px-6 py-2">
-            Wrong Firebase project for production admin ({activeFirebaseProjectId() || "unknown"}).
-            Set <code className="bg-amber-100 px-1 rounded">NEXT_PUBLIC_FIREBASE_PROD_*</code> on Vercel
-            to <code className="bg-amber-100 px-1 rounded">sip-prod-29422</code>, redeploy, then sign out
-            and sign in again.
+        {firebaseDiag.useProd && !isProdFirebaseProject() && (
+          <div className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs px-6 py-2 space-y-1">
+            <p>
+              Wrong Firebase project for production admin ({activeFirebaseProjectId() || "unknown"}).
+              Expected <code className="bg-amber-100 px-1 rounded">sip-prod-29422</code>.
+            </p>
+            {firebaseDiag.missing.length > 0 && (
+              <p>
+                Missing in this build:{" "}
+                <code className="bg-amber-100 px-1 rounded">
+                  {firebaseDiag.missing.join(", ")}
+                </code>
+                . Add on Vercel → Production, then <strong>Redeploy</strong> (vars are baked in at
+                build time).
+              </p>
+            )}
+            {!firebaseDiag.missing.length && (
+              <p>
+                PROD vars look set but this deploy may predate them — trigger a fresh Production
+                redeploy, then sign out and sign in again.
+              </p>
+            )}
           </div>
         )}
         <div className="max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center gap-6">
