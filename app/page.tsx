@@ -1,5 +1,6 @@
 import type { ComponentProps } from "react";
 
+import { APP_STORE_URL } from "../lib/app-store";
 import { BarTeaser } from "./components/BarTeaser";
 import { Button } from "./components/Button";
 import { Container } from "./components/Container";
@@ -9,7 +10,6 @@ import { PhoneScreenshot } from "./components/PhoneScreenshot";
 import { PhoneScrollReveal } from "./components/PhoneScrollReveal";
 import { ScrollReveal } from "./components/ScrollReveal";
 import { Section } from "./components/Section";
-import { WaitlistForm } from "./components/WaitlistForm";
 
 /* ----------------------------- Page shell ----------------------------- */
 
@@ -22,7 +22,6 @@ export default function Home() {
         <ProofStrip />
         <FeatureRows />
         <EveryFeatureSection />
-        <WaitlistSection />
         <BarTeaser />
       </main>
       <SiteFooter />
@@ -49,12 +48,12 @@ function SiteHeader() {
           <a href="#every-feature" className="transition-colors hover:text-ink">
             Features
           </a>
-          <a href="#contact" className="transition-colors hover:text-ink">
-            Get access
+          <a href="#venues" className="transition-colors hover:text-ink">
+            For bars
           </a>
         </nav>
-        <Button href="#contact" variant="primary">
-          Get early access
+        <Button href={APP_STORE_URL} variant="primary">
+          Download on the App Store
         </Button>
       </Container>
     </header>
@@ -92,8 +91,8 @@ function Hero() {
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
-              <Button href="#contact" variant="primary">
-                Get early access
+              <Button href={APP_STORE_URL} variant="primary">
+                Download on the App Store
               </Button>
               <Button href="#app" variant="secondary">
                 See the app
@@ -371,40 +370,6 @@ function EveryFeatureSection() {
   );
 }
 
-/* ------------------------ Waitlist (patron) -------------------------- */
-
-function WaitlistSection() {
-  return (
-    <Section
-      id="contact"
-      tone="sand"
-      className="relative overflow-hidden pb-28 sm:pb-36 lg:pb-44"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[60%]"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(232,215,181,0) 0%, rgba(232,168,69,0.22) 55%, rgba(212,102,43,0.28) 100%)",
-        }}
-      />
-      <Container className="relative">
-        <ScrollReveal variant="rise" className="mx-auto max-w-2xl text-center">
-          <Eyebrow className="justify-center">Early access</Eyebrow>
-          <h2 className="mt-6 font-serif text-4xl leading-tight sm:text-5xl">
-            Join the waitlist
-          </h2>
-          <p className="mt-6 text-lg leading-relaxed text-muted">
-            We&rsquo;re opening Sip city by city. New York is live, Ann Arbor is
-            up next, and we&rsquo;ll email you the moment your city opens.
-          </p>
-          <WaitlistForm />
-        </ScrollReveal>
-      </Container>
-    </Section>
-  );
-}
-
 /* ------------------------------- Footer ------------------------------ */
 
 function SiteFooter() {
@@ -436,8 +401,13 @@ function FooterNav() {
       <a href="#venues" className="transition-colors hover:text-ink">
         For bars
       </a>
-      <a href="#contact" className="transition-colors hover:text-ink">
-        Get access
+      <a
+        href={APP_STORE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="transition-colors hover:text-ink"
+      >
+        Download
       </a>
       <a href="/privacy" className="transition-colors hover:text-ink">
         Privacy

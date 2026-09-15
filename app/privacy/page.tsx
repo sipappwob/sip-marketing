@@ -183,7 +183,7 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Resend</strong> &mdash; transactional email delivery
-          (waitlist confirmations, password resets, account notifications).
+          (password resets, account notifications).
         </li>
       </ul>
 

@@ -69,8 +69,8 @@ function LegalHeader() {
           <Link href="/#why" className="transition-colors hover:text-ink">
             Why Sip
           </Link>
-          <Link href="/#contact" className="transition-colors hover:text-ink">
-            Contact
+          <Link href="/#venues" className="transition-colors hover:text-ink">
+            For bars
           </Link>
         </nav>
       </Container>
