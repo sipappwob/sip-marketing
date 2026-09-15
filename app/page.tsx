@@ -233,7 +233,7 @@ const features: FeatureBlock[] = [
     rotate: 6,
     screenshot: {
       src: "search.jpg",
-      alt: "Sip Search tab with the query 'sa': bar results including Eightball Saloon and Casa Dominick's plus people results @samuelhanson and @salty_nina with Friend / Add actions.",
+      alt: "Sip Search tab with the query 'sa': bar results including Eightball Saloon and Casa Dominick's plus people results with mutual-friend counts and Friend / Add actions.",
     },
   },
   {
