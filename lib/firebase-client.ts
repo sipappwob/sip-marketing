@@ -446,6 +446,7 @@ export async function adminDmcaListLogs(limit = 50): Promise<DmcaLogRow[]> {
 
 export type BarAdminAssignmentRow = {
   barId: string;
+  barName?: string;
   role?: string;
   status?: string;
 };

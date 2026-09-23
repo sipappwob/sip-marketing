@@ -173,7 +173,16 @@ export default function AdminBarAdminsPage() {
               <tbody>
                 {validations.map((v) => (
                   <tr key={v.id} className="border-t border-ink/10">
-                    <td className="px-3 py-2 font-medium">{v.barName}</td>
+                    <td className="px-3 py-2">
+                      <div className="font-medium">
+                        {v.barName?.trim() || "Unknown bar"}
+                      </div>
+                      {v.barId ? (
+                        <div className="text-[10px] text-ink/45 font-mono truncate max-w-[14rem]">
+                          {v.barId}
+                        </div>
+                      ) : null}
+                    </td>
                     <td className="px-3 py-2 font-mono text-xs">{v.email}</td>
                     <td className="px-3 py-2 text-xs text-ink/60">
                       {formatMillis(v.createdAt)}
@@ -243,12 +252,21 @@ function AdminRow({ admin, primaryAction, secondaryAction, busy }: RowProps) {
           uid: {admin.id}
         </div>
         {admin.assignedBars && admin.assignedBars.length > 0 && (
-          <div className="text-xs text-ink/70 mt-1">
-            Bars:{" "}
-            {admin.assignedBars
-              .map((b) => `${b.barId}${b.status ? ` (${b.status})` : ""}`)
-              .join(", ")}
-          </div>
+          <ul className="text-xs text-ink/70 mt-2 space-y-1">
+            {admin.assignedBars.map((b) => (
+              <li key={b.barId}>
+                <span className="font-medium text-ink/85">
+                  {b.barName?.trim() || "Unknown bar"}
+                </span>
+                {b.status ? (
+                  <span className="text-ink/50"> · {b.status}</span>
+                ) : null}
+                <div className="text-[10px] text-ink/45 font-mono truncate">
+                  {b.barId}
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
       <div className="flex gap-2 shrink-0">
