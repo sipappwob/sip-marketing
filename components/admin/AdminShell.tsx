@@ -75,6 +75,7 @@ export default function AdminShell({ children }: AdminShellProps) {
       { href: "/admin/analytics", label: "Analytics" },
       { href: "/admin/bars", label: "Bars" },
       { href: "/admin/bar-admins", label: "Bar admins" },
+      { href: "/admin/outreach", label: "Outreach" },
       { href: "/admin/access", label: "Early access" },
       { href: "/admin/users", label: "Users" },
       { href: "/admin/reports", label: "Reports" },
