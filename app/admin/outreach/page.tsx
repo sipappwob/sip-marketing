@@ -637,6 +637,14 @@ function ProspectRow({
         </td>
         <td className="px-3 py-2">
           <div className="flex flex-wrap gap-1">
+            {p.website && (
+              <button disabled={busy} onClick={onRelookup} className="text-[11px] px-2 py-1 rounded border border-ink/20 text-ink/60 disabled:opacity-60">
+                Re-scan site
+              </button>
+            )}
+            <button onClick={beginEdit} className="text-[11px] px-2 py-1 rounded border border-ink/20 text-ink/60">
+              {p.email ? "Edit email" : "Add email"}
+            </button>
             {canSend && (
               <button disabled={busy} onClick={onSendOne} className="text-[11px] px-2 py-1 rounded bg-ink text-ivory disabled:opacity-60">
                 Send now
@@ -670,11 +678,6 @@ function ProspectRow({
             {["skipped", "declined", "do_not_contact", "bounced"].includes(p.status) && p.email && (
               <button onClick={() => setStatus("ready")} className="text-[11px] px-2 py-1 rounded border border-ink/20 text-ink/60">
                 Re-enable
-              </button>
-            )}
-            {p.website && (
-              <button disabled={busy} onClick={onRelookup} className="text-[11px] px-2 py-1 rounded border border-ink/20 text-ink/60 disabled:opacity-60">
-                Re-scan site
               </button>
             )}
             <button
