@@ -120,19 +120,22 @@ export const DEFAULT_SETTINGS: OutreachSettings = {
   phoneOnlyCities: ["Ann Arbor"],
   templates: {
     initial: {
-      subject: "Quick question about {{barName}}",
-      body: `Hi there,
+      subject: "{{barName}} x Will, Sip",
+      body: `Hi,
 
-I'm Will, one of the founders of Sip, a new app that shows people live wait times at bars near them, reported by the people standing in line. We're starting in {{areaLabel}}, and {{barName}} is already on the map.
+I'm Will, one of the founders of Sip, a new app for people deciding where to go out in {{areaLabel}}. {{barName}} is already on the map.
 
-Before we open to the public, I'm looking for a small group of bars to test it with. There's no cost and nothing to install. All I'm after is honest feedback on what would make it useful to you.
+Our goal is to build a direct promotional channel for bars, so you can put a custom offer or event in front of the people most likely to show up. We also want to give bar owners insight into who their customers are and when they come in. There's still refinement ahead, and I'd rather do this with bars than guess at what you need.
+
+Before we open to the public, I'm looking for a small group of bars to test with. There's no cost, and all that's required is the iOS app. I'm just looking for feedback on how to make this useful to you.
 
 What you'd get:
-- A free listing on the map with your hours, photos, and live line status
-- A direct channel to post promotions to people deciding where to go tonight
-- Personalized support from me on whatever you need, from setup to ideas
 
-There's no traffic yet while we refine it, and we launch soon. Once we do, I think it becomes a strong promotional channel for a bar like yours.
+- A listing on the map featuring hours, photos, and whatever you want to promote
+- First access to promotional tools shaped by your input as they become available
+- Personalized support from me for any app-related questions or issues
+
+Because we haven't launched yet, there's currently no traffic. The goal is to launch soon, and the bars that help us get this right are the ones we'll stay loyal to, with the best terms we offer and a direct line to me.
 
 {{meetingAsk}}
 
@@ -141,11 +144,11 @@ Founder, Sip
 {{fromEmail}}
 {{calendlyLine}}
 
-Reply "stop" and I won't email again.
+(P.S. - Reply "Stop" and I promise not to email you again)
 {{postalAddress}}`,
     },
     followUp1: {
-      subject: "Re: Quick question about {{barName}}",
+      subject: "Re: {{barName}} x Will, Sip",
       body: `Hi again,
 
 Floating this back up in case it got buried. I'd love to get {{barName}} in as one of our first test bars, and I can keep it to 10 minutes on the phone{{orStopBy}}.
@@ -157,11 +160,11 @@ Founder, Sip
 {{fromEmail}}
 {{calendlyLine}}
 
-Reply "stop" and I won't email again.
+(P.S. - Reply "Stop" and I promise not to email you again)
 {{postalAddress}}`,
     },
     followUp2: {
-      subject: "Re: Quick question about {{barName}}",
+      subject: "Re: {{barName}} x Will, Sip",
       body: `Hi,
 
 Last note from me. If you'd like to see how {{barName}} looks on Sip, I can send a screenshot or walk you through it in a few minutes. Otherwise I'll leave you be, and best of luck this season.
@@ -171,7 +174,7 @@ Founder, Sip
 {{fromEmail}}
 {{calendlyLine}}
 
-Reply "stop" and I won't email again.
+(P.S. - Reply "Stop" and I promise not to email you again)
 {{postalAddress}}`,
     },
   },
@@ -272,7 +275,7 @@ export function renderPreview(
   p: Pick<Prospect, "barName" | "city" | "neighborhood" | "meetingMode">,
   s: OutreachSettings
 ): { subject: string; body: string } {
-  const areaLabel = p.city === "New York City" ? "the East Village and Lower East Side" : p.city || p.neighborhood || "your neighborhood";
+  const areaLabel = p.city === "New York City" ? "NYC" : p.city || p.neighborhood || "your neighborhood";
   const vars: Record<string, string> = {
     barName: p.barName,
     city: p.city,
@@ -280,8 +283,8 @@ export function renderPreview(
     areaLabel,
     meetingAsk:
       p.meetingMode === "phone_only"
-        ? "Would you be open to a 10-minute call sometime this week or next?"
-        : "Would you be open to a 10-minute call? I'm also happy to stop by in person whenever is easiest for you.",
+        ? "Would you be open to a 10-minute call? Just let me know what works best."
+        : "Would you be open to a 10-minute call? I'm also happy to stop by in person if that's preferred - just let me know what's best.",
     orStopBy: p.meetingMode === "phone_only" ? "" : ", or stop by in person",
     calendlyLine: s.calendlyUrl.trim() ? `Pick a time that suits you: ${s.calendlyUrl.trim()}` : "",
     postalAddress: s.postalAddress.trim(),
