@@ -59,6 +59,11 @@ const JOB_LABEL: Record<JobType, string> = {
   sync_replies: "Check for replies",
 };
 
+/** Reachable by phone only: no email anywhere, but Google Places gave us a number. */
+function isPhoneOnly(p: Pick<Prospect, "email" | "phone" | "status">): boolean {
+  return !p.email && !!p.phone && !["closed", "do_not_contact"].includes(p.status);
+}
+
 function fmt(ts: Timestamp | null | undefined): string {
   if (!ts) return "—";
   try {
@@ -82,6 +87,7 @@ export default function AdminOutreachPage() {
   const [showTemplates, setShowTemplates] = useState(false);
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [phoneOnlyFilter, setPhoneOnlyFilter] = useState(false);
   const [search, setSearch] = useState("");
   const [previewBarId, setPreviewBarId] = useState<string>("");
 
@@ -166,10 +172,11 @@ export default function AdminOutreachPage() {
     return (prospects ?? []).filter((p) => {
       if (cityFilter !== "all" && p.city !== cityFilter) return false;
       if (statusFilter !== "all" && p.status !== statusFilter) return false;
-      if (q && !`${p.barName} ${p.email ?? ""} ${p.neighborhood ?? ""}`.toLowerCase().includes(q)) return false;
+      if (phoneOnlyFilter && !isPhoneOnly(p)) return false;
+      if (q && !`${p.barName} ${p.email ?? ""} ${p.neighborhood ?? ""} ${p.notes ?? ""}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [prospects, cityFilter, statusFilter, search]);
+  }, [prospects, cityFilter, statusFilter, phoneOnlyFilter, search]);
 
   const previewProspect =
     (prospects ?? []).find((p) => p.id === previewBarId) ??
@@ -183,6 +190,7 @@ export default function AdminOutreachPage() {
 
   const total = prospects?.length ?? 0;
   const withEmail = (prospects ?? []).filter((p) => !!p.email).length;
+  const phoneOnlyCount = (prospects ?? []).filter(isPhoneOnly).length;
   const readyCount = counts.ready ?? 0;
 
   return (
@@ -218,9 +226,10 @@ export default function AdminOutreachPage() {
         <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</p>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
         <Stat label="Bars" value={total} />
         <Stat label="With email" value={withEmail} />
+        <Stat label="Phone only" value={phoneOnlyCount} tone={phoneOnlyCount > 0 ? "warn" : undefined} />
         <Stat label="Ready to send" value={readyCount} />
         <Stat label="Follow-ups due" value={dueFollowUps} />
         <Stat label="Replied" value={(counts.replied ?? 0) + (counts.interested ?? 0) + (counts.declined ?? 0)} />
@@ -329,6 +338,15 @@ export default function AdminOutreachPage() {
               </option>
             ))}
           </select>
+          <label className="flex items-center gap-1.5 text-xs text-ink/70 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={phoneOnlyFilter}
+              onChange={(e) => setPhoneOnlyFilter(e.target.checked)}
+              className="accent-amber-600"
+            />
+            Phone only ({phoneOnlyCount})
+          </label>
           <span className="text-xs text-ink/50">{filtered.length} shown</span>
         </div>
 
@@ -376,9 +394,17 @@ export default function AdminOutreachPage() {
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: number; tone?: "good" }) {
+function Stat({ label, value, tone }: { label: string; value: number; tone?: "good" | "warn" }) {
   return (
-    <div className={`rounded-lg border p-3 ${tone === "good" ? "bg-emerald-50 border-emerald-200" : "bg-white border-ink/10"}`}>
+    <div
+      className={`rounded-lg border p-3 ${
+        tone === "good"
+          ? "bg-emerald-50 border-emerald-200"
+          : tone === "warn"
+            ? "bg-amber-50 border-amber-200"
+            : "bg-white border-ink/10"
+      }`}
+    >
       <div className="text-[11px] text-ink/60">{label}</div>
       <div className="text-2xl font-semibold mt-0.5">{value.toLocaleString()}</div>
     </div>
@@ -500,10 +526,20 @@ function ProspectRow({
     <>
       <tr className="border-t border-ink/10 align-top">
         <td className="px-3 py-2">
-          <div className="font-medium">{p.barName}</div>
+          <div className="font-medium flex items-center gap-1.5 flex-wrap">
+            {p.barName}
+            {isPhoneOnly(p) && (
+              <span
+                className="inline-block text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200"
+                title="No email found anywhere. Reach this bar by phone."
+              >
+                Phone only
+              </span>
+            )}
+          </div>
           <div className="text-[11px] text-ink/50">
             {p.neighborhood ?? p.city}
-            {p.meetingMode === "phone_only" ? " · phone only" : ""}
+            {p.meetingMode === "phone_only" ? " · call, no visit" : ""}
           </div>
           <div className="text-[11px] text-ink/50 flex gap-2 flex-wrap mt-0.5">
             {p.website && (
@@ -511,7 +547,11 @@ function ProspectRow({
                 site
               </a>
             )}
-            {p.phone && <span>{p.phone}</span>}
+            {p.phone && (
+              <a href={`tel:${p.phone.replace(/[^+\d]/g, "")}`} className={isPhoneOnly(p) ? "font-semibold text-amber-900 underline" : "underline"}>
+                {p.phone}
+              </a>
+            )}
             {p.instagram && (
               <a href={`https://instagram.com/${p.instagram}`} target="_blank" rel="noreferrer" className="underline">
                 @{p.instagram}
@@ -574,6 +614,19 @@ function ProspectRow({
               “{p.lastReplySnippet}”
             </div>
           )}
+          {p.notes && !notesOpen && (
+            <button
+              type="button"
+              onClick={() => {
+                setNotes(p.notes ?? "");
+                setNotesOpen(true);
+              }}
+              className="block text-left text-[11px] mt-1 max-w-[18rem] whitespace-pre-wrap rounded border border-sky-200 bg-sky-50 text-sky-950 px-2 py-1 hover:bg-sky-100"
+              title="Click to edit notes"
+            >
+              {p.notes}
+            </button>
+          )}
         </td>
         <td className="px-3 py-2 text-xs text-ink/70 whitespace-nowrap">
           {p.step ?? 0}
@@ -624,8 +677,14 @@ function ProspectRow({
                 Re-scan site
               </button>
             )}
-            <button onClick={() => setNotesOpen((v) => !v)} className="text-[11px] px-2 py-1 rounded border border-ink/20 text-ink/60">
-              Notes
+            <button
+              onClick={() => {
+                if (!notesOpen) setNotes(p.notes ?? "");
+                setNotesOpen((v) => !v);
+              }}
+              className="text-[11px] px-2 py-1 rounded border border-ink/20 text-ink/60"
+            >
+              {p.notes ? "Edit notes" : "Add notes"}
             </button>
           </div>
         </td>
